@@ -69,4 +69,5 @@ main functions are
   * `Beacon` generates an oscillating beacon, which was used for testing
   * `Glider` flies a little glider across the screen
 
-* `step
+* `golStep()` takes a step in the game.
+* `golDisplay()` updates the display with the current iteration.
