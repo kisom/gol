@@ -13,7 +13,7 @@
 
 #define Serial	SerialUSB
 #define UnusedAnalog	A3
-#define CardSelect	9
+#define CardSelect	10
 
 
 const	int	HEIGHT = 48;
