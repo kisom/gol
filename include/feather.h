@@ -13,6 +13,10 @@ const int	HEIGHT = 32;
 const int	WIDTH  = 128;
 
 
+// Blink the LED to indicate a problem.
+void	distress();
+
+// Graphics
 void	setupDisplay();
 void	clearDisplay();
 void	drawPixel(int x, int y);

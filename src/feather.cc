@@ -14,6 +14,25 @@ Adafruit_SSD1306	oled(128, 32, &Wire);
 
 
 void
+distress()
+{
+	int	led = 13;
+	pinMode(led, OUTPUT);
+
+	while (true) {
+		digitalWrite(led, HIGH);
+		delay(100);
+		digitalWrite(led, LOW);
+		delay(100);
+		digitalWrite(led, HIGH);
+		delay(100);
+		digitalWrite(led, LOW);
+		delay(700);
+	}
+}
+
+
+void
 setupDisplay()
 {
 	oled.begin(SSD1306_SWITCHCAPVCC, 0x3C);

@@ -30,9 +30,5 @@ void	drawPixel(int x, int y);
 void	clearPixel(int x, int y);
 void	updateDisplay();
 
-// SD card
-bool	 setupSDCard();
-File	*openFile(const char *path, bool write);
-
 
 #endif // __REDBOARD_H

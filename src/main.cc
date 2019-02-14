@@ -5,6 +5,7 @@
 #include <Streaming.h>
 
 #include <board.h>
+#include <card.h>
 #include <gol.h>
 
 
@@ -44,10 +45,13 @@ setup()
 
 	waitForSerial();
 	seedRandom();
-	if (!SD.begin(CardSelect)) {
-		Serial << "SD not available" << endl;
-		while (1);
+
+	if (!cardInit(CardSelect)) {
+		Serial << "Failed to initialise SD card on pin "
+		       << CardSelect << endl;
+		distress();
 	}
+
 	golInit(Random);
 
 	Serial << "BOOT OK" << endl;

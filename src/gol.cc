@@ -1,5 +1,6 @@
 #include <Arduino.h>
 #include <SD.h>
+#include <Streaming.h>
 
 #include <board.h>
 #include <gol.h>
@@ -215,8 +216,77 @@ golStep()
 }
 
 
-void
-readGame()
+/*
+bool
+golLoad(const char *path)
 {
+	File	file = SD.open(path);
+	bool	result = false;
+	int	i = 0;
+	int	ch = 0;
+	
+	if (!file) {
+		goto golLoadFinally;
+	}
+
+	while (i < ARRAY_LENGTH) {
+		file >> ch;
+
+		switch (ch) {
+		case -1:
+			goto golLoadFinally;
+			break;
+		case 0x20:
+			current.array[i] = 0;
+			break;
+		case 0x2A:
+			current.array[i] = 1;
+			break;
+		default:
+			continue;
+		}
+
+		i++;
+	}
+
+golLoadFinally:
+	if (file) {
+		file.close();
+	}
+
+	return result;
 
 }
+
+
+bool
+golStore(const char *path)
+{
+	File	file = SD.open(path, FILE_WRITE);
+	bool	result = false;
+	int	i = 0;
+
+	if (!file) {
+		goto golStoreFinally;
+	}
+
+	for (int row = 0; row < HEIGHT; row++) {
+		for (int col = 0; col < WIDTH; col++) {
+			i = arrayIndex(col, row);
+			if (current.array[i]) {
+				file << "*";
+			} else {
+				file << " ";
+			}
+		}
+		file << endl;
+	}
+
+golStoreFinally:
+	if (file) {
+		file.close();
+	}
+	return result;
+}
+
+*/

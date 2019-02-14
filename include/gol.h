@@ -17,9 +17,10 @@ struct GameState {
 enum GOLPattern { Random, Beacon, Glider };
 
 void	golInit(GOLPattern pattern);
-void	loadFromFile(const char *path);
 void	golStep();
 void	golDisplay();
+// bool	golLoad(const char *path);
+// bool	golStore(const char *path);
 
 
 #endif // __GOL_H
