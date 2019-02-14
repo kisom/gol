@@ -1,6 +1,8 @@
 #if defined(REDBOARD)
 
 #include <Arduino.h>
+#include <SD.h>
+#include <SPI.h>
 #include <Wire.h>
 
 #include <SFE_MicroOLED.h> 
@@ -9,6 +11,24 @@
 
 MicroOLED oled(9, 1);
 
+
+void
+distress()
+{
+	int	led = 13;
+	pinMode(led, OUTPUT);
+
+	while (true) {
+		digitalWrite(led, HIGH);
+		delay(100);
+		digitalWrite(led, LOW);
+		delay(100);
+		digitalWrite(led, HIGH);
+		delay(100);
+		digitalWrite(led, LOW);
+		delay(700);
+	}
+}
 
 void
 setupDisplay()

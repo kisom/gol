@@ -1,4 +1,5 @@
 #include <Arduino.h>
+#include <SD.h>
 
 #include <board.h>
 #include <gol.h>
@@ -57,9 +58,13 @@ patternRandom()
 }
 
 void
-initGame(Pattern pattern)
+golInit(GOLPattern pattern)
 {
 	clearDisplay();
+
+	if (!SD.exists((char *)"gol/")) {
+		SD.mkdir((char *)"gol/");
+	}
 
 	current.iteration = 0;
 	switch (pattern) {
@@ -175,7 +180,7 @@ checkNeighbours(std::size_t x, std::size_t y)
 
 
 void
-display()
+golDisplay()
 {
 	std::size_t	idx;
 
@@ -185,7 +190,7 @@ display()
 		for (size_t col = 0; col < WIDTH; col++) {
 			idx = arrayIndex(col, row);
 			if (current.array[idx]) {
-			drawPixel(col, row);	
+				drawPixel(col, row);	
 			}
 		}
 	}
@@ -195,7 +200,7 @@ display()
 
 
 void
-step()
+golStep()
 {
 	for (size_t row = 0; row < HEIGHT; row++) {
 		for (size_t col = 0; col < WIDTH; col++) {
@@ -207,4 +212,11 @@ step()
 		current.array[i] = update.array[i];
 	}
 	current.iteration++;
+}
+
+
+void
+readGame()
+{
+
 }

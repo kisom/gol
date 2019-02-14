@@ -1,4 +1,5 @@
 #include <Arduino.h>
+#include <SD.h>
 #include <SPI.h>
 #include <Wire.h>
 #include <Streaming.h>
@@ -21,10 +22,8 @@ seedRandom()
 		delay(11);
 	}
 	randomSeed(seed);
-
-	int	die = random(6);
-	Serial << "DIE: " << die << endl;
 }
+
 
 void
 waitForSerial()
@@ -34,27 +33,33 @@ waitForSerial()
 	}
 }
 
+
 void
 setup()
 {
 	Serial.begin(9600);
 	Wire.begin();
+	pinMode(A0, OUTPUT);
 	setupDisplay();
 
 	waitForSerial();
 	seedRandom();
-	initGame(Random);
+	if (!SD.begin(CardSelect)) {
+		Serial << "SD not available" << endl;
+		while (1);
+	}
+	golInit(Random);
 
 	Serial << "BOOT OK" << endl;
 	Serial << "BOOT: " << millis() << "MS" << endl;
-	display();
+	golDisplay();
 }
 
 
 void
 loop()
 {
-	step();
-	display();
-	delay(100);
+	delay(10);
+	golStep();
+	golDisplay();
 }

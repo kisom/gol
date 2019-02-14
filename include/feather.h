@@ -7,7 +7,7 @@
 
 
 #define UnusedAnalog	A3
-#define CardSelect	9
+#define CardSelect	5
 
 const int	HEIGHT = 32;
 const int	WIDTH  = 128;
