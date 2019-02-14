@@ -2,21 +2,21 @@
 #define __GOL_H
 
 
-#include <cstddef>
 #include <cstdint>
+#include <board.h>
 
-static const std::size_t	WIDTH = 128;
-static const std::size_t	HEIGHT = 64;
-constexpr std::size_t		ARRAY_LENGTH = WIDTH * HEIGHT;
+constexpr int		ARRAY_LENGTH = WIDTH * HEIGHT;
 
 
 struct GameState {
-	std::size_t	iteration;
+	int		iteration;
 	std::uint8_t	array[ARRAY_LENGTH];
 };
 
 
-void	initGame();
+enum Pattern { Random, Beacon, Glider };
+
+void	initGame(Pattern pattern);
 void	loadFromFile(const char *path);
 void	step();
 void	display();
