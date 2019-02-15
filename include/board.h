@@ -5,6 +5,8 @@
 #include <feather.h>
 #elif defined(REDBOARD)
 #include <redboard.h>
+#elif defined(AVR)
+#include <avr.h>
 #endif
 
 

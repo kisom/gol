@@ -4,70 +4,79 @@
 #include <Arduino.h>
 #include <Wire.h>
 #include <Adafruit_SSD1306.h>
+#include <Adafruit_GFX.h>
 
-
-Adafruit_SSD1306	oled(128, 32, &Wire);
 
 #define BUTTON_A  9
 #define BUTTON_B  6
 #define BUTTON_C  5
 
 
-void
-distress()
-{
-	int	led = 13;
-	pinMode(led, OUTPUT);
-
-	while (true) {
-		digitalWrite(led, HIGH);
-		delay(100);
-		digitalWrite(led, LOW);
-		delay(100);
-		digitalWrite(led, HIGH);
-		delay(100);
-		digitalWrite(led, LOW);
-		delay(700);
-	}
-}
-
 
 void
 setupDisplay()
 {
-	oled.begin(SSD1306_SWITCHCAPVCC, 0x3C);
 	pinMode(BUTTON_A, INPUT_PULLUP);
 	pinMode(BUTTON_B, INPUT_PULLUP);
 	pinMode(BUTTON_C, INPUT_PULLUP);
 }
 
 
-void
-clearDisplay()
+void	
+FeatherOLED::setup()
 {
-	oled.clearDisplay();
+	this->oled.begin(SSD1306_SWITCHCAPVCC, 0x3C);
 }
 
 
 void
-drawPixel(int x, int y)
+FeatherOLED::clear()
 {
-	oled.drawPixel(x, y, WHITE);
+	this->oled.clearDisplay();
 }
 
 
 void
-clearPixel(int x, int y)
+FeatherOLED::pixel(int x, int y)
 {
-	oled.drawPixel(x, y, BLACK);
+	this->oled.drawPixel(x, y, WHITE);
 }
 
 
 void
-updateDisplay()
+FeatherOLED::clearPixel(int x, int y)
 {
-	oled.display();
+	this->oled.drawPixel(x, y, BLACK);
 }
+
+
+void
+FeatherOLED::circle(int x, int y, int r)
+{
+	this->oled.drawCircle((uint16_t)x, (uint16_t)y, (uint16_t)r, WHITE);
+}
+
+
+void
+FeatherOLED::show()
+{
+	this->oled.display();
+}
+
+
+int
+FeatherOLED::height()
+{
+	return 32;
+}
+
+
+int
+FeatherOLED::width()
+{
+	return 128;
+}
+
 
 
 #endif // defined(FEATHER)

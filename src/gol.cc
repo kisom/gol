@@ -1,8 +1,8 @@
 #include <Arduino.h>
-#include <SD.h>
-#include <Streaming.h>
+#include <SdFat.h>
 
-#include <board.h>
+#include <card.h>
+#include <graphics.h>
 #include <gol.h>
 
 
@@ -10,18 +10,18 @@ static struct GameState	current;
 static struct GameState	update;
 
 
-static inline size_t
-arrayIndex(std::size_t x, std::size_t y)
+static inline int 
+arrayIndex(int x, int y)
 {
-	return x + WIDTH * y;
+	return x + OLED::WIDTH * y;
 }
 
 
 static inline void
-pointFromIndex(std::size_t idx, std::size_t &x, std::size_t &y)
+pointFromIndex(int idx, int &x, int &y)
 {
-	x = idx % WIDTH;
-	y = idx / WIDTH;
+	x = idx % OLED::WIDTH;
+	y = idx / OLED::WIDTH;
 }
 
 
@@ -61,10 +61,8 @@ patternRandom()
 void
 golInit(GOLPattern pattern)
 {
-	clearDisplay();
-
-	if (!SD.exists((char *)"gol/")) {
-		SD.mkdir((char *)"gol/");
+	if (!cardExists((const char *)"gol/")) {
+		mkdir((const char *)"gol/");
 	}
 
 	current.iteration = 0;
@@ -84,8 +82,8 @@ golInit(GOLPattern pattern)
 }
 
 
-static inline size_t 
-wrapBack(std::size_t v, std::size_t border)
+static inline int 
+wrapBack(int v, int border)
 {
 	if (v == 0) {
 		v = border;
@@ -95,8 +93,8 @@ wrapBack(std::size_t v, std::size_t border)
 	return v;
 }
 
-static inline size_t 
-wrapForward(std::size_t v, std::size_t border)
+static inline int 
+wrapForward(int v, int border)
 {
 	if (v == (border - 1)) {
 		v = 0;
@@ -109,61 +107,61 @@ wrapForward(std::size_t v, std::size_t border)
 }
 
 static void
-checkNeighbours(std::size_t x, std::size_t y)
+checkNeighbours(int x, int y)
 {
 	// Neighbours:
 	// 123
 	// 4*5
 	// 678
 	
-	std::uint8_t	livingNeighbours = 0;
-	std::size_t	idx = arrayIndex(x, y);
-	std::size_t	nidx; // Neighbour index.
+	uint8_t	livingNeighbours = 0;
+	int	idx = arrayIndex(x, y);
+	int	nidx; // Neighbour index.
 	
 	// Neighbour 1
-	nidx = arrayIndex(wrapBack(x, WIDTH), wrapForward(y, HEIGHT));
+	nidx = arrayIndex(wrapBack(x, OLED::WIDTH), wrapForward(y, OLED::HEIGHT));
 	if (current.array[nidx]) {
 		livingNeighbours++;
 	}
 
 	// Neighbour 2
-	nidx = arrayIndex(x, wrapForward(y, HEIGHT));
+	nidx = arrayIndex(x, wrapForward(y, OLED::HEIGHT));
 	if (current.array[nidx]) {
 		livingNeighbours++;
 	}
 
 	// Neighbour 3
-	nidx = arrayIndex(wrapForward(x, WIDTH), wrapForward(y, HEIGHT));
+	nidx = arrayIndex(wrapForward(x, OLED::WIDTH), wrapForward(y, OLED::HEIGHT));
 	if (current.array[nidx]) {
 		livingNeighbours++;
 	}
 
 	// Neighbour 4
-	nidx = arrayIndex(wrapBack(x, WIDTH), y);
+	nidx = arrayIndex(wrapBack(x, OLED::WIDTH), y);
 	if (current.array[nidx]) {
 		livingNeighbours++;
 	}
 
 	// Neighbour 5
-	nidx = arrayIndex(wrapForward(x, WIDTH), y);
+	nidx = arrayIndex(wrapForward(x, OLED::WIDTH), y);
 	if (current.array[nidx]) {
 		livingNeighbours++;
 	}
 
 	// Neighbour 6
-	nidx = arrayIndex(wrapBack(x, WIDTH), wrapBack(y, HEIGHT));
+	nidx = arrayIndex(wrapBack(x, OLED::WIDTH), wrapBack(y, OLED::HEIGHT));
 	if (current.array[nidx]) {
 		livingNeighbours++;
 	}
 
 	// Neighbour 7
-	nidx = arrayIndex(x, wrapBack(y, HEIGHT));
+	nidx = arrayIndex(x, wrapBack(y, OLED::HEIGHT));
 	if (current.array[nidx]) {
 		livingNeighbours++;
 	}
 
 	// Neighbour 8
-	nidx = arrayIndex(wrapForward(x, WIDTH), wrapBack(y, HEIGHT));
+	nidx = arrayIndex(wrapForward(x, OLED::WIDTH), wrapBack(y, OLED::HEIGHT));
 	if (current.array[nidx]) {
 		livingNeighbours++;
 	}
@@ -183,28 +181,28 @@ checkNeighbours(std::size_t x, std::size_t y)
 void
 golDisplay()
 {
-	std::size_t	idx;
+	int	idx;
 
-	clearDisplay();
+	OLED::clear();
 
-	for (size_t row = 0; row < HEIGHT; row++) {
-		for (size_t col = 0; col < WIDTH; col++) {
+	for (size_t row = 0; row < OLED::HEIGHT; row++) {
+		for (size_t col = 0; col < OLED::WIDTH; col++) {
 			idx = arrayIndex(col, row);
 			if (current.array[idx]) {
-				drawPixel(col, row);	
+				OLED::pixel(col, row);	
 			}
 		}
 	}
 
-	updateDisplay();
+	OLED::show();
 }
 
 
 void
 golStep()
 {
-	for (size_t row = 0; row < HEIGHT; row++) {
-		for (size_t col = 0; col < WIDTH; col++) {
+	for (size_t row = 0; row < OLED::HEIGHT; row++) {
+		for (size_t col = 0; col < OLED::WIDTH; col++) {
 			checkNeighbours(col, row);
 		}
 	}
@@ -216,11 +214,10 @@ golStep()
 }
 
 
-/*
 bool
 golLoad(const char *path)
 {
-	File	file = SD.open(path);
+	File	file = openFile(path, false);
 	bool	result = false;
 	int	i = 0;
 	int	ch = 0;
@@ -262,25 +259,36 @@ golLoadFinally:
 bool
 golStore(const char *path)
 {
-	File	file = SD.open(path, FILE_WRITE);
 	bool	result = false;
 	int	i = 0;
+	int	pop = 0;
 
+	// ignore errors: if the file doesn't exist, don't worry about
+	// the failure to remove.
+	cardRemove((char *)path);
+
+	File	file = openFile(path, FILE_WRITE);
 	if (!file) {
 		goto golStoreFinally;
 	}
 
-	for (int row = 0; row < HEIGHT; row++) {
-		for (int col = 0; col < WIDTH; col++) {
+	for (int row = 0; row < OLED::HEIGHT; row++) {
+		for (int col = 0; col < OLED::WIDTH; col++) {
 			i = arrayIndex(col, row);
 			if (current.array[i]) {
-				file << "*";
+				file.write("*");
+				pop++;
 			} else {
-				file << " ";
+				file.write(" ");
 			}
 		}
-		file << endl;
+		file.write("\n");
 	}
+
+	file.print("POP: ");
+	file.println(pop, DEC);
+	file.print("ITER: ");
+	file.println(current.iteration, DEC);
 
 golStoreFinally:
 	if (file) {
@@ -288,5 +296,3 @@ golStoreFinally:
 	}
 	return result;
 }
-
-*/

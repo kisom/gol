@@ -2,15 +2,15 @@
 #define __GOL_H
 
 
-#include <cstdint>
-#include <board.h>
+#include <stdint.h>
+#include <graphics.h>
 
-constexpr int		ARRAY_LENGTH = WIDTH * HEIGHT;
+constexpr int		ARRAY_LENGTH = OLED::HEIGHT * OLED::WIDTH;
 
 
 struct GameState {
-	int		iteration;
-	std::uint8_t	array[ARRAY_LENGTH];
+	int	iteration;
+	uint8_t	array[ARRAY_LENGTH];
 };
 
 
@@ -19,8 +19,8 @@ enum GOLPattern { Random, Beacon, Glider };
 void	golInit(GOLPattern pattern);
 void	golStep();
 void	golDisplay();
-// bool	golLoad(const char *path);
-// bool	golStore(const char *path);
+bool	golLoad(const char *path);
+bool	golStore(const char *path);
 
 
 #endif // __GOL_H

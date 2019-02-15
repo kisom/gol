@@ -1,15 +1,13 @@
 #include <Arduino.h>
-#include <SD.h>
 #include <SPI.h>
 #include <Wire.h>
-#include <Streaming.h>
 
-#include <board.h>
 #include <card.h>
 #include <gol.h>
 
 
-constexpr bool	shouldWaitForSerial = false;
+constexpr bool	shouldWaitForSerial = true;
+const int	UnusedAnalog = A0;
 
 
 void
@@ -40,22 +38,24 @@ setup()
 {
 	Serial.begin(9600);
 	Wire.begin();
-	pinMode(A0, OUTPUT);
-	setupDisplay();
+	OLED::setup();
 
 	waitForSerial();
+	Serial.println("BOOT START");
 	seedRandom();
 
-	if (!cardInit(CardSelect)) {
-		Serial << "Failed to initialise SD card on pin "
-		       << CardSelect << endl;
+	if (!cardInit()) {
+		Serial.println("SD INIT FAIL");
 		distress();
 	}
 
 	golInit(Random);
+	golStore("gol/initial.txt");
 
-	Serial << "BOOT OK" << endl;
-	Serial << "BOOT: " << millis() << "MS" << endl;
+	Serial.println("BOOT OK");
+	Serial.print("BOOT: ");
+	Serial.print(millis(), DEC);
+	Serial.println("MS");
 	golDisplay();
 }
 
@@ -63,7 +63,8 @@ setup()
 void
 loop()
 {
-	delay(10);
+	delay(1000);
 	golStep();
 	golDisplay();
+	golStore("gol/current.txt");
 }

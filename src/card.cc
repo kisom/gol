@@ -1,29 +1,52 @@
 #include <Arduino.h>
-#include <SD.h>
+#include <SdFat.h>
 #include <SPI.h>
+
+#include <stdint.h>
+
 #include <card.h>
 
 
-Sd2Card		card;
-SdVolume	volume;
+const uint8_t	cardSelect = 10;
+static SdFat	card;
 
 
 bool
-cardInit(int cs)
+cardInit()
 {
-	if (!card.init(cs, SPI_FULL_SPEED)) {
+	if (!card.begin(cardSelect)) {
 		return false;
 	}
-
-	if (!volume.init(card)) {
-		return false;
-	}
+	return true;
 }
 
 
 File
 openFile(const char *path, bool write)
 {
-
+	if (write) {
+		return card.open(path, FILE_WRITE);
+	}
+	return card.open(path, FILE_READ);
 }
 
+
+bool
+cardExists(const char *path)
+{
+	return card.exists(path);
+}
+
+
+bool
+mkdir(const char *path)
+{
+	return card.mkdir(path);
+}
+
+
+bool
+cardRemove(const char *path)
+{
+	return card.remove(path);
+}

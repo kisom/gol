@@ -1,0 +1,13 @@
+Feather
+=======
+
+Button C:	 5
+Button B:	 6
+Button A:	 9
+SD CS:		10
+LED:		13
+
+
+I2C:
++ OLED: 0x3C
++ RTC:  0x68

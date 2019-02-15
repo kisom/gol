@@ -1,4 +1,4 @@
-BOARD :=	redboard
+BOARD :=	feather
 FIRMWARE :=	.pioenvs/$(BOARD)/firmware.bin
 SOURCES :=	src/main.cc		\
 		src/gol.cc		\
