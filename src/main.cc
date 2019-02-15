@@ -1,12 +1,16 @@
 #include <Arduino.h>
 #include <SPI.h>
 #include <Wire.h>
+#include <string.h>
 
+#include <buttons.h>
 #include <card.h>
 #include <gol.h>
+#include <power.h>
+#include <rtc.h>
 
 
-constexpr bool	shouldWaitForSerial = true;
+constexpr bool	shouldWaitForSerial = false;
 const int	UnusedAnalog = A0;
 
 
@@ -36,9 +40,12 @@ waitForSerial()
 void
 setup()
 {
+	pinMode(6, INPUT_PULLUP);
+
 	Serial.begin(9600);
 	Wire.begin();
 	OLED::setup();
+	rtcInit();
 
 	waitForSerial();
 	Serial.println("BOOT START");
@@ -49,22 +56,22 @@ setup()
 		distress();
 	}
 
-	golInit(Random);
-	golStore("gol/initial.txt");
-
 	Serial.println("BOOT OK");
 	Serial.print("BOOT: ");
 	Serial.print(millis(), DEC);
 	Serial.println("MS");
-	golDisplay();
+
+	OLED::print(10, 10, (const char *)"BOOT OK");
+	delay(1000);
+	OLED::clear();
+
 }
 
 
 void
 loop()
 {
-	delay(1000);
-	golStep();
-	golDisplay();
-	golStore("gol/current.txt");
+	playGameOfLife();
+	// If the game loop exits, indicate an error.
+	distress();
 }

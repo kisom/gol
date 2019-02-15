@@ -2,6 +2,7 @@
 #include <Adafruit_GFX.h>
 
 #include <graphics.h>
+#include <rtc.h>
 
 
 void
@@ -35,6 +36,9 @@ void
 setup()
 {
 	oled.begin(SSD1306_SWITCHCAPVCC, 0x3C);
+	oled.setTextSize(1);
+	oled.setTextColor(WHITE);        // Draw white text
+	oled.clearDisplay();
 }
 
 
@@ -68,6 +72,24 @@ circle(uint16_t x, uint16_t y, uint16_t r, bool fill)
 	else {
 		oled.drawCircle(x, y, r, WHITE);
 	}
+}
+
+
+void
+print(uint16_t x, uint16_t y, const char *text)
+{
+	oled.setCursor(x, y);
+	oled.print(text);
+	oled.display();
+}
+
+
+void
+print(uint16_t x, uint16_t y, double value, int precision)
+{
+	oled.setCursor(x, y);
+	oled.print(value, precision);
+	oled.display();
 }
 
 

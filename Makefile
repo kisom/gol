@@ -1,12 +1,21 @@
-BOARD :=	feather
+BOARD :=	feather_m0
 FIRMWARE :=	.pioenvs/$(BOARD)/firmware.bin
-SOURCES :=	src/main.cc		\
+SOURCES :=	include/avr.h		\
+		include/buttons.h	\
+		include/card.h		\
+		include/gol.h		\
+		include/graphics.h	\
+		include/power.h		\
+		include/rtc.cc		\
+		include/util.h		\
+		src/buttons.cc		\
+		src/card.cc		\
 		src/gol.cc		\
-		src/redboard.cc		\
-		src/feather.cc		\
-		include/feather.h	\
-		include/redboard.h	\
-		include/gol.h
+		src/graphics.cc		\
+		src/main.cc		\
+		src/power.cc		\
+		src/rtc.cc		\
+		src/util.cc
 
 PIO :=	pio run -e $(BOARD)
 

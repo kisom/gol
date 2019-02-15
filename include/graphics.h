@@ -17,6 +17,8 @@ void	clear();
 void	pixel(uint16_t x, uint16_t y);
 void	clearPixel(uint16_t x, uint16_t y);
 void	circle(uint16_t x, uint16_t y, uint16_t r, bool fill);
+void	print(uint16_t x, uint16_t y, const char *text);
+void	print(uint16_t x, uint16_t y, double value, int precision);
 void	show();
 
 } // namespace OLED

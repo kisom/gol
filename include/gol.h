@@ -22,5 +22,8 @@ void	golDisplay();
 bool	golLoad(const char *path);
 bool	golStore(const char *path);
 
+// playGameOfLife enters the game loop.
+void	playGameOfLife();
+
 
 #endif // __GOL_H

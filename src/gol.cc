@@ -1,6 +1,7 @@
 #include <Arduino.h>
 #include <SdFat.h>
 
+#include <buttons.h>
 #include <card.h>
 #include <graphics.h>
 #include <gol.h>
@@ -295,4 +296,56 @@ golStoreFinally:
 		file.close();
 	}
 	return result;
+}
+
+
+static unsigned int	golDelay = 100;
+static bool		golPlay = true;
+
+
+void
+golButtonA()
+{
+	if (golDelay > 100) {
+		golDelay -= 100;
+	}
+}
+
+
+void
+golButtonC()
+{
+	golDelay += 100;
+}
+
+
+void
+golButtonB()
+{
+	golPlay = !golPlay;
+}
+
+
+void
+playGameOfLife()
+{
+	unsigned long	nextUpdate = 0;
+
+	buttonA.registerCallback(golButtonA);
+	buttonB.registerCallback(golButtonB);
+	buttonC.registerCallback(golButtonC);
+
+	golInit(Random);
+	golStore("gol/initial.txt");
+	golDisplay();
+
+	while (true) {
+		checkAllButtons();
+		if (golPlay && (millis() > nextUpdate)) {
+			golStep();
+			golDisplay();
+			golStore("gol/current.txt");
+			nextUpdate = millis() + golDelay;
+		}
+	}
 }
