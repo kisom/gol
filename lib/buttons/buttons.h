@@ -30,10 +30,4 @@ private:
 };
 
 
-static Button	buttonA(9);
-static Button	buttonB(6);
-static Button	buttonC(5);
-void		checkAllButtons();
-
-
 #endif // __BUTTONS_H

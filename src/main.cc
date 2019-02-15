@@ -61,7 +61,9 @@ setup()
 	Serial.print(millis(), DEC);
 	Serial.println("MS");
 
-	OLED::print(10, 10, (const char *)"BOOT OK");
+	OLED::print(10, 0, (const char *)"BOOT OK");
+	OLED::print(10, 10, (const char *)"HELLO, WORLD");
+	OLED::print(10, 20, (const char *)":)");
 	delay(1000);
 	OLED::clear();
 

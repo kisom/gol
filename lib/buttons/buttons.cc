@@ -19,7 +19,7 @@ Button::sample()
 	uint8_t		reading = digitalRead(this->pin);
 	unsigned long	sampledAt = millis();
 
-	if (reading == this->value) {
+	if (reading != this->value) {
 		return false;
 	}
 
@@ -51,13 +51,4 @@ void
 Button::registerCallback(button_callback cb)
 {
 	this->cb = cb;
-}
-
-
-void
-checkAllButtons()
-{
-	buttonA.sample();
-	buttonB.sample();
-	buttonC.sample();
 }

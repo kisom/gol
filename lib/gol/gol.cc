@@ -222,13 +222,13 @@ golLoad(const char *path)
 	bool	result = false;
 	int	i = 0;
 	int	ch = 0;
-	
+
 	if (!file) {
 		goto golLoadFinally;
 	}
 
-	while (i < ARRAY_LENGTH) {
-		file >> ch;
+	while (i < ARRAY_LENGTH && file.available()) {
+		ch = file.read();
 
 		switch (ch) {
 		case -1:
@@ -247,9 +247,16 @@ golLoad(const char *path)
 		i++;
 	}
 
+	result = true;
+
 golLoadFinally:
 	if (file) {
 		file.close();
+	}
+
+	if (!result) {
+		OLED::print(10, 30, (const char *)":(");
+		distress();
 	}
 
 	return result;
@@ -322,7 +329,23 @@ golButtonC()
 void
 golButtonB()
 {
+	static unsigned long	lastPress = 0;
+
+	if ((millis() - lastPress) < 250) {
+		Serial.println("resetting game");
+		golInit(Random);
+		golStore("gol/initial.txt");
+		golDisplay();
+	}
+
+	lastPress = millis();
+	Serial.print("last press: ");
+	Serial.println(lastPress);
+
 	golPlay = !golPlay;
+	if (!golPlay) {
+		golStore("gol/current.txt");
+	}
 }
 
 
@@ -330,21 +353,32 @@ void
 playGameOfLife()
 {
 	unsigned long	nextUpdate = 0;
+	Button		buttonA(9);
+	Button		buttonB(6);
+	Button		buttonC(5);
 
 	buttonA.registerCallback(golButtonA);
 	buttonB.registerCallback(golButtonB);
 	buttonC.registerCallback(golButtonC);
 
-	golInit(Random);
-	golStore("gol/initial.txt");
+	if (cardExists("gol/current.txt")) {
+		golLoad("gol/current.txt");
+	} else {
+		golInit(Random);
+		golStore("gol/initial.txt");
+	}
 	golDisplay();
 
 	while (true) {
-		checkAllButtons();
+		buttonA.sample();
+		buttonB.sample();
+		buttonC.sample();
 		if (golPlay && (millis() > nextUpdate)) {
 			golStep();
 			golDisplay();
-			golStore("gol/current.txt");
+			if ((current.iteration % 10) == 0) {
+				golStore("gol/current.txt");
+			}
 			nextUpdate = millis() + golDelay;
 		}
 	}
