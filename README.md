@@ -7,10 +7,6 @@ the spirit of the Computational Beauty of Nature. This uses a couple of
 libraries and the Arduino framework in PlatformIO because it isn't an
 exercise in embedded programming necessarily.
 
-Note that while this (currently) supports the Sparkfun Redboard Turbo and
-MicroOLED breakout, it won't in the future as this setup doesn't have any
-inputs.
-
 
 Board support
 -------------
@@ -23,51 +19,35 @@ The minimum hardware I'd like for my explorations are
 * an SD card for data storage
 * some kind of audio output to make music
 
-The board support packages are provided by including `board.h` and should
-provide the following:
+I've settled on the Adafruit Feathers. I have the Feather M4 for the
+main board, with the Adalogger and OLED FeatherWings. I wanted to add
+a GPS, but it doesn't have an SD card (and then I'd have two modules
+with coin cells) and the music maker, but it uses the same pins as the
+display's buttons. I've found 3 modules is a tenable size; I'm not sure
+about the others.
 
-### Graphics routines
+The `lib` directory contains small libraries for utility functions
+and the hardware abstraction layer.
 
-* `setupDisplay()` to initialise the display.
-* `clearDisplay()` should erase the contents of the screen.
-* `drawPixel(int x, int y)` should allow you to put a pixel on the
-  screen. Right now, the displays that I'm using are monochrome, so
-  there's that.
-* `clearPixel(int x, int y)` should allow you to clear a pixel on
-  the screen.
-* `updateDisplay()` should refresh the screen buffer.
-
-TODO (with tentative APIs):
-* `circle(int x, int y, int r)`
-* `rect(int x, int y, int w, int l)`
-
-### SD card (TODO)
-
-* `readFile(const char *path, uint8_t *buf, unsigned len)` should
-  read a file from the SD card.
-* `writeFile(const char *path, uint8_t *buf, unsigned len)` should
-  write a file to the SD card.
-
-### Other features
-
-* `UnusedAnalog` is used at the beginning to seed the PRNG. It's a sort of
-  hacky, non-cryptographically safe method: a number of `analogRead`s
-  are done on the unused analog port, and the four LSBs are used to build
-  an unsigned long seed value.
+TODO: write up the HAL
+TODO: write up utilities
+TODO: move hardware support to a HAL library.
 
 ## Explorations
 
 #### Game of Life
 
 This is a simple implementation of Conway's Game of Life. It could use
-some improvements, like a bit buffer instead of a byte buffer. The
-main functions are
+some improvements, like a bit buffer instead of a byte buffer. If there
+is a game in progress, it is resumed; otherwise, the world is generated
+randomly. The initial game state (and regular updates) are stored on the
+SD card under `gol/initial.txt` and `gol/current.txt` - these are human
+readable, too. The controls are
 
-* `golInit(GOLPattern pattern)` where the patterns are
-
-  * `Random` to randomly generate a universe
-  * `Beacon` generates an oscillating beacon, which was used for testing
-  * `Glider` flies a little glider across the screen
-
-* `golStep()` takes a step in the game.
-* `golDisplay()` updates the display with the current iteration.
+* A: speed up the simulation by 100ms between steps (minimum of 100 ms
+  between steps) - e.g. if there are 1000ms between steps, pressing this
+  twice gives 1000ms - 100ms - 100ms = 800ms between steps.
+* B: pause the simulation, saving the game state. Double pressing
+  the button within 250 ms will cause the simulation to reset to a new
+  random game state.
+* C: slow down the simulation by 100ms between steps.
