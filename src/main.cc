@@ -34,6 +34,8 @@ setup()
 	Serial.begin(9600);
 	Wire.begin();
 	OLED::setup();
+	neoPixel(0, 0, 150);
+	neoPixelBrightness(10);
 	rtcInit();
 	audioSetup();
 

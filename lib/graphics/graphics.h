@@ -17,6 +17,9 @@ struct Point {
 uint16_t	delta(uint16_t a, uint16_t b);
 double		euclidist(Point &a, Point &b);
 
+void		neoPixel(uint8_t r, uint8_t g, uint8_t b);
+void		neoPixelBrightness(uint8_t brightness);
+
 
 namespace OLED {
 

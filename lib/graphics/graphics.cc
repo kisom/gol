@@ -1,9 +1,15 @@
 #include <Adafruit_SSD1306.h>
 #include <Adafruit_GFX.h>
+#include <Adafruit_NeoPixel.h>
 #include <math.h>
 
 #include <graphics.h>
 #include <rtc.h>
+
+
+const int		pixelPin = 8;
+Adafruit_NeoPixel	pixel(1, pixelPin, NEO_GRB + NEO_KHZ800);
+static bool		pixelReady = false;
 
 
 void
@@ -11,6 +17,8 @@ distress()
 {
 	int	led = 13;
 	pinMode(led, OUTPUT);
+
+	neoPixel(255, 0, 0);
 
 	while (true) {
 		digitalWrite(led, HIGH);
@@ -22,6 +30,32 @@ distress()
 		digitalWrite(led, LOW);
 		delay(700);
 	}
+}
+
+
+void
+neoPixel(uint8_t r, uint8_t g, uint8_t b)
+{
+	if (!pixelReady) {
+		pixel.begin();
+		pixelReady = true;
+	}
+
+	pixel.setPixelColor(0, pixel.Color(r, g, b));
+	pixel.show();
+}
+
+
+void
+neoPixelBrightness(uint8_t brightness)
+{
+	if (!pixelReady) {
+		pixel.begin();
+		pixelReady = true;
+	}
+
+	pixel.setBrightness(brightness);
+	pixel.show();
 }
 
 
