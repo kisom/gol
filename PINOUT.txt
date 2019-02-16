@@ -3,9 +3,11 @@ Feather
 
 Button C:	 5
 Button B:	 6
+NeoPixel:	 8
 Button A:	 9
 SD CS:		10
 LED:		13
+Speaker:	A3
 
 
 I2C:

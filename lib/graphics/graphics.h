@@ -7,6 +7,17 @@
 
 void	distress();
 
+struct Point {
+	uint16_t	x;
+	uint16_t	y;
+};
+
+
+// euclidist computes the Euclidean distance between two points.
+uint16_t	delta(uint16_t a, uint16_t b);
+double		euclidist(Point &a, Point &b);
+
+
 namespace OLED {
 
 static const int HEIGHT = 32;

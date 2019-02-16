@@ -3,29 +3,18 @@
 #include <Wire.h>
 #include <string.h>
 
+#include <audio.h>
 #include <buttons.h>
 #include <card.h>
 #include <gol.h>
+#include <mandelbrot.h>
 #include <power.h>
+#include <random.h>
 #include <rtc.h>
 
 
 constexpr bool	shouldWaitForSerial = false;
 const int	UnusedAnalog = A0;
-
-
-void
-seedRandom()
-{
-	unsigned long	seed = 0;
-	pinMode(UnusedAnalog, INPUT);
-
-	for (int i = 0; i < 4; i++) {
-		seed += ((analogRead(UnusedAnalog) & 0xF) << 4);
-		delay(11);
-	}
-	randomSeed(seed);
-}
 
 
 void
@@ -46,13 +35,13 @@ setup()
 	Wire.begin();
 	OLED::setup();
 	rtcInit();
+	audioSetup();
 
 	waitForSerial();
-	Serial.println("BOOT START");
-	seedRandom();
+	seedPRNG(UnusedAnalog);
 
 	if (!cardInit()) {
-		Serial.println("SD INIT FAIL");
+		OLED::print(0, 0, "SD INIT FAIL");
 		distress();
 	}
 
@@ -63,7 +52,13 @@ setup()
 
 	OLED::print(10, 0, (const char *)"BOOT OK");
 	OLED::print(10, 10, (const char *)"HELLO, WORLD");
-	OLED::print(10, 20, (const char *)":)");
+#if defined(ADAFRUIT_FEATHER_M4_EXPRESS)
+	OLED::print(10, 20, "FEATHER M4");
+#elif defined(ADAFRUIT_FEATHER_M0)
+	OLED::print(10, 20, "FEATHER M0");
+#else
+	OLED::print(10, 20, "UNK FEATHER");
+#endif
 	delay(1000);
 	OLED::clear();
 
@@ -73,7 +68,8 @@ setup()
 void
 loop()
 {
-	playGameOfLife();
+	// playGameOfLife();
+	mandelbrot();
 	// If the game loop exits, indicate an error.
 	distress();
 }

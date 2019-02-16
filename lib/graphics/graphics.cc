@@ -1,5 +1,6 @@
 #include <Adafruit_SSD1306.h>
 #include <Adafruit_GFX.h>
+#include <math.h>
 
 #include <graphics.h>
 #include <rtc.h>
@@ -23,6 +24,30 @@ distress()
 	}
 }
 
+
+uint16_t
+delta(uint16_t a, uint16_t b)
+{
+	if (a < b) {
+		return b - a;
+	}
+	return a - b;
+}
+
+
+double
+euclidist(Point &a, Point &b)
+{
+	uint32_t	dx, dy;
+
+	dx = delta(a.x, b.x);
+	dx *= dx;
+
+	dy = delta(a.y, b.y);
+	dy *= dy;
+	
+	return sqrt(static_cast<double>(dy + dx));
+}
 
 namespace OLED {
 

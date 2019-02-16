@@ -10,6 +10,7 @@ constexpr int		ARRAY_LENGTH = OLED::HEIGHT * OLED::WIDTH;
 
 struct GameState {
 	int	iteration;
+	int	population;
 	uint8_t	array[ARRAY_LENGTH];
 };
 

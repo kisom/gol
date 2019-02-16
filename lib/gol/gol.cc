@@ -202,6 +202,7 @@ golDisplay()
 void
 golStep()
 {
+	current.population = 0;
 	for (size_t row = 0; row < OLED::HEIGHT; row++) {
 		for (size_t col = 0; col < OLED::WIDTH; col++) {
 			checkNeighbours(col, row);
@@ -210,6 +211,9 @@ golStep()
 
 	for (size_t i = 0; i < ARRAY_LENGTH; i++) {
 		current.array[i] = update.array[i];
+		if (current.array[i]) {
+			current.population++;
+		}
 	}
 	current.iteration++;
 }
@@ -297,6 +301,7 @@ golStore(const char *path)
 	file.println(pop, DEC);
 	file.print("ITER: ");
 	file.println(current.iteration, DEC);
+	result = true;
 
 golStoreFinally:
 	if (file) {
@@ -332,19 +337,39 @@ golButtonB()
 	static unsigned long	lastPress = 0;
 
 	if ((millis() - lastPress) < 250) {
-		Serial.println("resetting game");
 		golInit(Random);
 		golStore("gol/initial.txt");
 		golDisplay();
 	}
 
 	lastPress = millis();
-	Serial.print("last press: ");
-	Serial.println(lastPress);
 
 	golPlay = !golPlay;
 	if (!golPlay) {
 		golStore("gol/current.txt");
+	}
+}
+
+
+void
+gameOfLifeStep(unsigned long &nextUpdate, Button &a, Button &b, Button &c)
+{
+	a.sample();
+	b.sample();
+	c.sample();
+	if (golPlay && (millis() > nextUpdate)) {
+		golStep();
+		golDisplay();
+		if ((current.iteration % 10) == 0) {
+			if (!golStore("gol/current.txt")) {
+				OLED::clear();
+				OLED::print(0, 0, "SD error");
+				OLED::show();
+				distress();
+			}
+		}
+		
+		nextUpdate = millis() + golDelay;
 	}
 }
 
@@ -370,16 +395,6 @@ playGameOfLife()
 	golDisplay();
 
 	while (true) {
-		buttonA.sample();
-		buttonB.sample();
-		buttonC.sample();
-		if (golPlay && (millis() > nextUpdate)) {
-			golStep();
-			golDisplay();
-			if ((current.iteration % 10) == 0) {
-				golStore("gol/current.txt");
-			}
-			nextUpdate = millis() + golDelay;
-		}
+		gameOfLifeStep(nextUpdate, buttonA, buttonB, buttonC);
 	}
 }
