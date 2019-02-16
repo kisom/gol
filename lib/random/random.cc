@@ -45,7 +45,7 @@ getHardwareRandomNumber(int unusedAnalog)
 	pinMode(unusedAnalog, INPUT);
 
 	for (int i = 0; i < 4; i++) {
-		r += ((analogRead(UnusedAnalog) & 0xF) << 4);
+		r += ((analogRead(unusedAnalog) & 0xF) << 4);
 		delay(11);
 	}
 #endif // defined(ADAFRUIT_FEATHER_M4_EXPRESS)
