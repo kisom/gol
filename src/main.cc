@@ -70,8 +70,8 @@ setup()
 void
 loop()
 {
-	// playGameOfLife();
-	mandelbrot();
+	playGameOfLife();
+	// mandelbrot();
 	// If the game loop exits, indicate an error.
 	distress();
 }
