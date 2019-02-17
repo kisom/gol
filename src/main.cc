@@ -8,6 +8,7 @@
 #include <card.h>
 #include <gol.h>
 #include <mandelbrot.h>
+#include <noise.h>
 #include <power.h>
 #include <random.h>
 #include <rtc.h>

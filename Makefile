@@ -13,6 +13,8 @@ SOURCES :=					\
 		lib/graphics/graphics.cc	\
 		lib/mandelbrot/mandelbrot.h	\
 		lib/mandelbrot/mandelbrot.cc	\
+		lib/noise/noise.h		\
+		lib/noise/noise.cc		\
 		lib/power/power.h		\
 		lib/power/power.cc		\
 		lib/random/random.h		\
