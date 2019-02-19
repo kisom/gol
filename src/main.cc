@@ -1,6 +1,7 @@
 #include <Arduino.h>
 #include <SPI.h>
 #include <Wire.h>
+#include <math.h>
 #include <string.h>
 
 #include <audio.h>
@@ -68,11 +69,32 @@ setup()
 }
 
 
+NoiseGenerator	perlin;
+
 void
 loop()
 {
-	playGameOfLife();
+	static double timeStep = 0.0;
+
+	OLED::clear();
+	for (double j = 0; j < static_cast<double>(OLED::HEIGHT); j++) {
+		for (double i = 0; i < static_cast<double>(OLED::WIDTH); i++) {
+			double noise = abs(perlin.sample(i, j, timeStep));
+			Serial.print(noise);
+			Serial.print(" ");
+			if (noise > 0.01 || noise < 0.05) {
+				OLED::pixel(i, j);
+			}
+		}
+		Serial.println();
+	}
+	OLED::show();
+
+	// playGameOfLife();
 	// mandelbrot();
 	// If the game loop exits, indicate an error.
-	distress();
+	// distress();
+	
+	timeStep += 0.01;
+	delay(100);
 }
