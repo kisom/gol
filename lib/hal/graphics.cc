@@ -4,9 +4,8 @@
 #include <math.h>
 #include <string.h>
 
-#include <graphics.h>
-#include <power.h>
-#include <rtc.h>
+#include <hal/graphics.h>
+#include <hal/power.h>
 
 
 const int		pixelPin = 8;

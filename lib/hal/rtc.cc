@@ -1,5 +1,6 @@
 #include <RTClib.h>
-#include <rtc.h>
+
+#include <hal/rtc.h>
 
 
 RTC_PCF8523	rtc;

@@ -1,10 +1,9 @@
 #include <Arduino.h>
 #include <SdFat.h>
 #include <SPI.h>
-
 #include <stdint.h>
 
-#include <card.h>
+#include <hal/card.h>
 
 
 const uint8_t	cardSelect = 10;

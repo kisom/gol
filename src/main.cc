@@ -4,15 +4,17 @@
 #include <math.h>
 #include <string.h>
 
-#include <audio.h>
-#include <buttons.h>
-#include <card.h>
+#include <hal/audio.h>
+#include <hal/buttons.h>
+#include <hal/card.h>
+#include <hal/graphics.h>
+#include <hal/power.h>
+#include <hal/random.h>
+#include <hal/rtc.h>
+
 #include <gol.h>
 #include <mandelbrot.h>
 #include <noise.h>
-#include <power.h>
-#include <random.h>
-#include <rtc.h>
 
 
 constexpr bool	shouldWaitForSerial = false;

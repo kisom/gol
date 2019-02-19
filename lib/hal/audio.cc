@@ -1,5 +1,5 @@
 #include <Arduino.h>
-#include <audio.h>
+#include <hal/audio.h>
 
 
 void

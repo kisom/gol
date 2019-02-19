@@ -1,5 +1,6 @@
 #include <Arduino.h>
-#include <random.h>
+
+#include <hal/random.h>
 
 
 #if defined(ADAFRUIT_FEATHER_M4_EXPRESS)

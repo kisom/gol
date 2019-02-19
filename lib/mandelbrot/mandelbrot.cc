@@ -1,5 +1,5 @@
 #include <mandelbrot.h>
-#include <graphics.h>
+#include <hal/graphics.h>
 
 const int escapeLimit = 255;
 

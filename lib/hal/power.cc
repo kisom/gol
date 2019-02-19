@@ -1,8 +1,9 @@
 #include <Arduino.h>
-#include <power.h>
-#include <util.h>
 #include <stdlib.h>
 #include <string.h>
+
+#include <hal/power.h>
+#include <util.h>
 
 
 // Note: the battery voltage divider is on the same pin as the

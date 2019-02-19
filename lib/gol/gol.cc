@@ -1,9 +1,9 @@
 #include <Arduino.h>
 #include <SdFat.h>
 
-#include <buttons.h>
-#include <card.h>
-#include <graphics.h>
+#include <hal/buttons.h>
+#include <hal/card.h>
+#include <hal/graphics.h>
 #include <gol.h>
 
 
