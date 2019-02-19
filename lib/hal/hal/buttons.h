@@ -5,6 +5,9 @@
 #include <stdint.h>
 
 
+namespace hal {
+
+
 typedef void (*button_callback)();
 
 
@@ -30,4 +33,5 @@ private:
 };
 
 
+} // namespace hal
 #endif // __BUTTONS_H

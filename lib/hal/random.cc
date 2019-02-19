@@ -3,6 +3,9 @@
 #include <hal/random.h>
 
 
+namespace hal {
+
+
 #if defined(ADAFRUIT_FEATHER_M4_EXPRESS)
 static bool	TRNGReady = false;
 static void
@@ -53,3 +56,6 @@ getHardwareRandomNumber(int unusedAnalog)
 
 	return r;	
 }
+
+
+} // namespace hal

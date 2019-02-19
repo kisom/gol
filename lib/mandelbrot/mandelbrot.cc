@@ -37,16 +37,16 @@ void
 mandelbrot()
 {
 	Complex c;
-	OLED::clear();
+	hal::OLED::clear();
 
-	for (uint16_t y = 0; y < OLED::HEIGHT; y++) {
-		for (uint16_t x = 0; x < OLED::WIDTH; x++) {
+	for (uint16_t y = 0; y < hal::OLED::HEIGHT; y++) {
+		for (uint16_t x = 0; x < hal::OLED::WIDTH; x++) {
 			c.re = -1.20 + static_cast<double>(x);
 			c.im = 0.35 - static_cast<double>(y);
 			if (mandelbrotEscape(c)) {
-				OLED::pixel(x, y);
+				hal::OLED::pixel(x, y);
 			}
 		}
 	}
-	OLED::show();
+	hal::OLED::show();
 }

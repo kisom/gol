@@ -3,6 +3,9 @@
 #include <util.h>
 
 
+namespace hal {
+
+
 const unsigned long debounceDelay = 50;
 
 
@@ -52,3 +55,6 @@ Button::registerCallback(button_callback cb)
 {
 	this->cb = cb;
 }
+
+
+} // namespace hal

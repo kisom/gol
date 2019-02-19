@@ -6,6 +6,9 @@
 #include <hal/card.h>
 
 
+namespace hal {
+
+
 const uint8_t	cardSelect = 10;
 static SdFat	card;
 
@@ -49,3 +52,6 @@ cardRemove(const char *path)
 {
 	return card.remove(path);
 }
+
+
+} // namespace hal

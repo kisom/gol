@@ -8,6 +8,9 @@
 #include <hal/power.h>
 
 
+namespace hal {
+
+
 const int		pixelPin = 8;
 Adafruit_NeoPixel	pixel(1, pixelPin, NEO_GRB + NEO_KHZ800);
 static bool		pixelReady = false;
@@ -192,3 +195,4 @@ show()
 
 
 } // namespace OLED
+} // namespace hal

@@ -5,8 +5,12 @@
 #include <stdint.h>
 
 
+namespace hal {
+
+
 uint32_t	getHardwareRandomNumber(int unusedAnalog);
 void		seedPRNG(int unusedAnalog);
 
 
+} // namespace hal
 #endif // __RANDOM_H

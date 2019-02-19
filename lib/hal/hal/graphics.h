@@ -5,6 +5,9 @@
 #include <stdint.h>
 
 
+namespace hal {
+
+
 void	distress();
 
 struct Point {
@@ -36,6 +39,7 @@ void	print(uint16_t x, uint16_t y, const char *text);
 void	print(uint16_t x, uint16_t y, double value, int precision);
 void	show();
 
-} // namespace OLED
 
+} // namespace OLED
+} // namespace hal
 #endif // __GRAPHICS_H

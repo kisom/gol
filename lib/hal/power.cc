@@ -6,9 +6,12 @@
 #include <util.h>
 
 
-// Note: the battery voltage divider is on the same pin as the
-// OLED FeatherWing's button A, so it needs to be reset to the
-// INPUT_PULLUP mode after a reading.
+namespace hal {
+
+
+// Note: on the Feather M0, the battery voltage divider is on the same 
+// pin as the OLED FeatherWing's button A, so it needs to be reset to 
+// the INPUT_PULLUP mode after a reading.
 
 
 double
@@ -41,3 +44,6 @@ batteryVoltageString(char *buf)
 
 	sprintf(buf, "%4.2fV", voltage);
 }
+
+
+} // namespace hal

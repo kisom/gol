@@ -2,6 +2,7 @@
 #include <hal/audio.h>
 
 
+namespace hal {
 void
 audioSetup()
 {
@@ -21,3 +22,6 @@ audioMute()
 {
 	noTone(SpeakerPin);
 }
+
+
+} // namespace hal

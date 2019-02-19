@@ -3,6 +3,9 @@
 #include <hal/rtc.h>
 
 
+namespace hal {
+
+
 RTC_PCF8523	rtc;
 
 bool
@@ -32,3 +35,6 @@ rtcNowUnix()
 {
 	return rtc.now().unixtime();
 }
+
+
+} // namespace hal

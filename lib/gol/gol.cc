@@ -9,7 +9,7 @@
 
 namespace gol {
 
-constexpr int		ARRAY_LENGTH = OLED::HEIGHT * OLED::WIDTH;
+constexpr int		ARRAY_LENGTH = hal::OLED::HEIGHT * hal::OLED::WIDTH;
 
 struct GameState {
 	int	iteration;
@@ -30,15 +30,15 @@ enum GOLPattern { Random, Beacon, Glider };
 static inline int 
 arrayIndex(int x, int y)
 {
-	return x + OLED::WIDTH * y;
+	return x + hal::OLED::WIDTH * y;
 }
 
 
 static inline void
 pointFromIndex(int idx, int &x, int &y)
 {
-	x = idx % OLED::WIDTH;
-	y = idx / OLED::WIDTH;
+	x = idx % hal::OLED::WIDTH;
+	y = idx / hal::OLED::WIDTH;
 }
 
 
@@ -82,14 +82,14 @@ loadStats()
 	char	ch;
 
 	longestIteration = 0;
-	if (!cardExists("gol/stats.txt")) {
+	if (!hal::cardExists("gol/stats.txt")) {
 		return;
 	}
 
-	File	stats = openFile("gol/stats.txt", false);
+	File	stats = hal::openFile("gol/stats.txt", false);
 	if (!stats) {
-		OLED::print(0, "SD error");
-		distress();
+		hal::OLED::print(0, "SD error");
+		hal::distress();
 	}
 
 	while (stats.available()) {
@@ -109,7 +109,7 @@ loadStats()
 static bool
 writeStats()
 {
-	File	stats = openFile("gol/stats.txt", true);
+	File	stats = hal::openFile("gol/stats.txt", true);
 
 	if (!stats) {
 		return false;
@@ -124,8 +124,8 @@ writeStats()
 static void
 init(GOLPattern pattern)
 {
-	if (!cardExists((const char *)"gol/")) {
-		mkdir((const char *)"gol/");
+	if (!hal::cardExists((const char *)"gol/")) {
+		hal::mkdir((const char *)"gol/");
 	}
 
 	current.iteration = 0;
@@ -145,9 +145,9 @@ init(GOLPattern pattern)
 
 	loadStats();	
 
-	neoPixel(0, 255, 0);
+	hal::neoPixel(0, 255, 0);
 	delay(1000);
-	neoPixel(0, 0, 255);
+	hal::neoPixel(0, 0, 255);
 }
 
 
@@ -190,49 +190,49 @@ checkNeighbours(int x, int y)
 	int	nidx; // Neighbour index.
 	
 	// Neighbour 1
-	nidx = arrayIndex(wrapBack(x, OLED::WIDTH), wrapForward(y, OLED::HEIGHT));
+	nidx = arrayIndex(wrapBack(x, hal::OLED::WIDTH), wrapForward(y, hal::OLED::HEIGHT));
 	if (current.array[nidx]) {
 		livingNeighbours++;
 	}
 
 	// Neighbour 2
-	nidx = arrayIndex(x, wrapForward(y, OLED::HEIGHT));
+	nidx = arrayIndex(x, wrapForward(y, hal::OLED::HEIGHT));
 	if (current.array[nidx]) {
 		livingNeighbours++;
 	}
 
 	// Neighbour 3
-	nidx = arrayIndex(wrapForward(x, OLED::WIDTH), wrapForward(y, OLED::HEIGHT));
+	nidx = arrayIndex(wrapForward(x, hal::OLED::WIDTH), wrapForward(y, hal::OLED::HEIGHT));
 	if (current.array[nidx]) {
 		livingNeighbours++;
 	}
 
 	// Neighbour 4
-	nidx = arrayIndex(wrapBack(x, OLED::WIDTH), y);
+	nidx = arrayIndex(wrapBack(x, hal::OLED::WIDTH), y);
 	if (current.array[nidx]) {
 		livingNeighbours++;
 	}
 
 	// Neighbour 5
-	nidx = arrayIndex(wrapForward(x, OLED::WIDTH), y);
+	nidx = arrayIndex(wrapForward(x, hal::OLED::WIDTH), y);
 	if (current.array[nidx]) {
 		livingNeighbours++;
 	}
 
 	// Neighbour 6
-	nidx = arrayIndex(wrapBack(x, OLED::WIDTH), wrapBack(y, OLED::HEIGHT));
+	nidx = arrayIndex(wrapBack(x, hal::OLED::WIDTH), wrapBack(y, hal::OLED::HEIGHT));
 	if (current.array[nidx]) {
 		livingNeighbours++;
 	}
 
 	// Neighbour 7
-	nidx = arrayIndex(x, wrapBack(y, OLED::HEIGHT));
+	nidx = arrayIndex(x, wrapBack(y, hal::OLED::HEIGHT));
 	if (current.array[nidx]) {
 		livingNeighbours++;
 	}
 
 	// Neighbour 8
-	nidx = arrayIndex(wrapForward(x, OLED::WIDTH), wrapBack(y, OLED::HEIGHT));
+	nidx = arrayIndex(wrapForward(x, hal::OLED::WIDTH), wrapBack(y, hal::OLED::HEIGHT));
 	if (current.array[nidx]) {
 		livingNeighbours++;
 	}
@@ -254,18 +254,18 @@ display()
 {
 	int	idx;
 
-	OLED::clear();
+	hal::OLED::clear();
 
-	for (size_t row = 0; row < OLED::HEIGHT; row++) {
-		for (size_t col = 0; col < OLED::WIDTH; col++) {
+	for (size_t row = 0; row < hal::OLED::HEIGHT; row++) {
+		for (size_t col = 0; col < hal::OLED::WIDTH; col++) {
 			idx = arrayIndex(col, row);
 			if (current.array[idx]) {
-				OLED::pixel(col, row);	
+				hal::OLED::pixel(col, row);	
 			}
 		}
 	}
 
-	OLED::show();
+	hal::OLED::show();
 }
 
 
@@ -273,8 +273,8 @@ static void
 updateGame()
 {
 	current.population = 0;
-	for (size_t row = 0; row < OLED::HEIGHT; row++) {
-		for (size_t col = 0; col < OLED::WIDTH; col++) {
+	for (size_t row = 0; row < hal::OLED::HEIGHT; row++) {
+		for (size_t col = 0; col < hal::OLED::WIDTH; col++) {
 			checkNeighbours(col, row);
 		}
 	}
@@ -292,7 +292,7 @@ updateGame()
 static bool
 load(const char *path)
 {
-	File	file = openFile(path, false);
+	File	file = hal::openFile(path, false);
 	bool	result = false;
 	int	i = 0;
 	int	ch = 0;
@@ -329,8 +329,8 @@ golLoadFinally:
 	}
 
 	if (!result) {
-		OLED::print(10, 30, (const char *)":(");
-		distress();
+		hal::OLED::print(0, "SD READ FAIL");
+		hal::distress();
 	}
 
 	return result;
@@ -347,16 +347,16 @@ store(const char *path)
 
 	// ignore errors: if the file doesn't exist, don't worry about
 	// the failure to remove.
-	cardRemove((char *)path);
+	hal::cardRemove((char *)path);
 
-	File	file = openFile(path, FILE_WRITE);
+	File	file = hal::openFile(path, FILE_WRITE);
 	if (!file) {
 		result = file.getError();
 		goto golStoreFinally;
 	}
 
-	for (int row = 0; row < OLED::HEIGHT; row++) {
-		for (int col = 0; col < OLED::WIDTH; col++) {
+	for (int row = 0; row < hal::OLED::HEIGHT; row++) {
+		for (int col = 0; col < hal::OLED::WIDTH; col++) {
 			i = arrayIndex(col, row);
 			if (current.array[i]) {
 				file.write("*");
@@ -421,7 +421,7 @@ golButtonB()
 
 
 static void
-step(unsigned long &nextUpdate, Button &a, Button &b, Button &c)
+step(unsigned long &nextUpdate, hal::Button &a, hal::Button &b, hal::Button &c)
 {
 	static int	lastPopulation;
 	static uint8_t	stagnation = 0;
@@ -437,11 +437,11 @@ step(unsigned long &nextUpdate, Button &a, Button &b, Button &c)
 		if ((current.iteration % 100) == 0) {
 			if ((sdResult = store("gol/current.txt")) != 0) {
 				char	buf[4];
-				OLED::clear();
-				OLED::print(0, "SD error");
+				hal::OLED::clear();
+				hal::OLED::print(0, "SD error");
 				snprintf(buf, 4, "%d", sdResult);
-				OLED::print(1, buf);
-				distress();
+				hal::OLED::print(1, buf);
+				hal::distress();
 			}
 		}
 
@@ -449,8 +449,8 @@ step(unsigned long &nextUpdate, Button &a, Button &b, Button &c)
 		if (current.population == lastPopulation) {
 			stagnation++;
 			if (stagnation > 50) {
-				OLED::clear();
-				OLED::print(0, 10, "STAGNANT POP");
+				hal::OLED::clear();
+				hal::OLED::print(0, 10, "STAGNANT POP");
 				delay(1000);
 				init(Random);
 				lastPopulation = 0;
@@ -469,12 +469,12 @@ step(unsigned long &nextUpdate, Button &a, Button &b, Button &c)
 static void
 splash()
 {
-	OLED::clear();
-	OLED::print(1, "  GAME ");
+	hal::OLED::clear();
+	hal::OLED::print(1, "  GAME ");
 	delay(500);
-	OLED::print(1, "  GAME OF ");
+	hal::OLED::print(1, "  GAME OF ");
 	delay(500);
-	OLED::print(1, "  GAME OF LIFE");
+	hal::OLED::print(1, "  GAME OF LIFE");
 	delay(1000);
 }
 
@@ -490,16 +490,16 @@ void
 play(bool reset)
 {
 	unsigned long	nextUpdate = 0;
-	Button		buttonA(9);
-	Button		buttonB(6);
-	Button		buttonC(5);
+	hal::Button	buttonA(9);
+	hal::Button	buttonB(6);
+	hal::Button	buttonC(5);
 
 	buttonA.registerCallback(golButtonA);
 	buttonB.registerCallback(golButtonB);
 	buttonC.registerCallback(golButtonC);
 
 	splash();
-	if (!reset && cardExists("gol/current.txt")) {
+	if (!reset && hal::cardExists("gol/current.txt")) {
 		load("gol/current.txt");
 	} else {
 		init(Random);
