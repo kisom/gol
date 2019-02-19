@@ -5,26 +5,12 @@
 #include <stdint.h>
 #include <graphics.h>
 
-constexpr int		ARRAY_LENGTH = OLED::HEIGHT * OLED::WIDTH;
-
-
-struct GameState {
-	int	iteration;
-	int	population;
-	uint8_t	array[ARRAY_LENGTH];
-};
-
-
-enum GOLPattern { Random, Beacon, Glider };
-
-void	golInit(GOLPattern pattern);
-void	golStep();
-void	golDisplay();
-bool	golLoad(const char *path);
-bool	golStore(const char *path);
+namespace gol {
 
 // playGameOfLife enters the game loop.
-void	playGameOfLife();
+void	play();
+void	play(bool reset);
 
 
+} // namespace gol
 #endif // __GOL_H

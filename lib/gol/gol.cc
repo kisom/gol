@@ -7,8 +7,24 @@
 #include <gol.h>
 
 
+namespace gol {
+
+constexpr int		ARRAY_LENGTH = OLED::HEIGHT * OLED::WIDTH;
+
+struct GameState {
+	int	iteration;
+	int	population;
+	uint8_t	array[ARRAY_LENGTH];
+};
+
 static struct GameState	current;
 static struct GameState	update;
+static int		longestIteration;
+static unsigned int	golDelay = 100;
+static bool		golPlay = true;
+
+
+enum GOLPattern { Random, Beacon, Glider };
 
 
 static inline int 
@@ -51,7 +67,7 @@ patternGlider()
 }
 
 
-void
+static void
 patternRandom()
 {
 	for (size_t i = 0; i < ARRAY_LENGTH; i++) {
@@ -59,8 +75,54 @@ patternRandom()
 	}
 }
 
-void
-golInit(GOLPattern pattern)
+
+static void
+loadStats()
+{
+	char	ch;
+
+	longestIteration = 0;
+	if (!cardExists("gol/stats.txt")) {
+		return;
+	}
+
+	File	stats = openFile("gol/stats.txt", false);
+	if (!stats) {
+		OLED::print(0, "SD error");
+		distress();
+	}
+
+	while (stats.available()) {
+		ch = stats.read();
+		if (ch == '\n') {
+			break;
+		}
+
+		longestIteration *= 10;
+		longestIteration += (int)ch & 0xFF;
+	}
+
+	stats.close();
+}
+
+
+static bool
+writeStats()
+{
+	File	stats = openFile("gol/stats.txt", true);
+
+	if (!stats) {
+		return false;
+	}
+
+	stats.println(longestIteration);
+	stats.close();
+	return true;
+}
+
+
+static void
+init(GOLPattern pattern)
 {
 	if (!cardExists((const char *)"gol/")) {
 		mkdir((const char *)"gol/");
@@ -80,6 +142,12 @@ golInit(GOLPattern pattern)
 	default:
 		patternRandom();
 	}
+
+	loadStats();	
+
+	neoPixel(0, 255, 0);
+	delay(1000);
+	neoPixel(0, 0, 255);
 }
 
 
@@ -94,6 +162,7 @@ wrapBack(int v, int border)
 	return v;
 }
 
+
 static inline int 
 wrapForward(int v, int border)
 {
@@ -106,6 +175,7 @@ wrapForward(int v, int border)
 
 	return v;
 }
+
 
 static void
 checkNeighbours(int x, int y)
@@ -179,8 +249,8 @@ checkNeighbours(int x, int y)
 }
 
 
-void
-golDisplay()
+static void
+display()
 {
 	int	idx;
 
@@ -199,8 +269,8 @@ golDisplay()
 }
 
 
-void
-golStep()
+static void
+updateGame()
 {
 	current.population = 0;
 	for (size_t row = 0; row < OLED::HEIGHT; row++) {
@@ -219,8 +289,8 @@ golStep()
 }
 
 
-bool
-golLoad(const char *path)
+static bool
+load(const char *path)
 {
 	File	file = openFile(path, false);
 	bool	result = false;
@@ -268,10 +338,10 @@ golLoadFinally:
 }
 
 
-bool
-golStore(const char *path)
+static uint8_t
+store(const char *path)
 {
-	bool	result = false;
+	uint8_t	result = 1;
 	int	i = 0;
 	int	pop = 0;
 
@@ -281,6 +351,7 @@ golStore(const char *path)
 
 	File	file = openFile(path, FILE_WRITE);
 	if (!file) {
+		result = file.getError();
 		goto golStoreFinally;
 	}
 
@@ -301,7 +372,9 @@ golStore(const char *path)
 	file.println(pop, DEC);
 	file.print("ITER: ");
 	file.println(current.iteration, DEC);
-	result = true;
+	result = 0;
+
+	writeStats();
 
 golStoreFinally:
 	if (file) {
@@ -311,11 +384,7 @@ golStoreFinally:
 }
 
 
-static unsigned int	golDelay = 100;
-static bool		golPlay = true;
-
-
-void
+static void
 golButtonA()
 {
 	if (golDelay > 100) {
@@ -324,58 +393,101 @@ golButtonA()
 }
 
 
-void
+static void
 golButtonC()
 {
 	golDelay += 100;
 }
 
 
-void
+static void
 golButtonB()
 {
 	static unsigned long	lastPress = 0;
 
 	if ((millis() - lastPress) < 250) {
-		golInit(Random);
-		golStore("gol/initial.txt");
-		golDisplay();
+		init(Random);
+		store("gol/initial.txt");
+		display();
 	}
 
 	lastPress = millis();
 
 	golPlay = !golPlay;
 	if (!golPlay) {
-		golStore("gol/current.txt");
+		store("gol/current.txt");
 	}
 }
 
 
-void
-gameOfLifeStep(unsigned long &nextUpdate, Button &a, Button &b, Button &c)
+static void
+step(unsigned long &nextUpdate, Button &a, Button &b, Button &c)
 {
+	static int	lastPopulation;
+	static uint8_t	stagnation = 0;
+	uint8_t		sdResult = 0;
+
 	a.sample();
 	b.sample();
 	c.sample();
 	if (golPlay && (millis() > nextUpdate)) {
-		golStep();
-		golDisplay();
-		if ((current.iteration % 10) == 0) {
-			if (!golStore("gol/current.txt")) {
+		lastPopulation = current.population;
+		updateGame();
+		display();
+		if ((current.iteration % 100) == 0) {
+			if ((sdResult = store("gol/current.txt")) != 0) {
+				char	buf[4];
 				OLED::clear();
-				OLED::print(0, 0, "SD error");
-				OLED::show();
+				OLED::print(0, "SD error");
+				snprintf(buf, 4, "%d", sdResult);
+				OLED::print(1, buf);
 				distress();
 			}
 		}
-		
+
+		// detect stagnation.
+		if (current.population == lastPopulation) {
+			stagnation++;
+			if (stagnation > 50) {
+				OLED::clear();
+				OLED::print(0, 10, "STAGNANT POP");
+				delay(1000);
+				init(Random);
+				lastPopulation = 0;
+				stagnation = 0;
+			}
+		}
+		else {
+			stagnation = 0;
+		}
+	
 		nextUpdate = millis() + golDelay;
 	}
 }
 
 
+static void
+splash()
+{
+	OLED::clear();
+	OLED::print(1, "  GAME ");
+	delay(500);
+	OLED::print(1, "  GAME OF ");
+	delay(500);
+	OLED::print(1, "  GAME OF LIFE");
+	delay(1000);
+}
+
+
 void
-playGameOfLife()
+play()
+{
+	play(false);
+}
+
+
+void
+play(bool reset)
 {
 	unsigned long	nextUpdate = 0;
 	Button		buttonA(9);
@@ -386,15 +498,18 @@ playGameOfLife()
 	buttonB.registerCallback(golButtonB);
 	buttonC.registerCallback(golButtonC);
 
-	if (cardExists("gol/current.txt")) {
-		golLoad("gol/current.txt");
+	splash();
+	if (!reset && cardExists("gol/current.txt")) {
+		load("gol/current.txt");
 	} else {
-		golInit(Random);
-		golStore("gol/initial.txt");
+		init(Random);
+		store("gol/initial.txt");
 	}
-	golDisplay();
+	display();
 
 	while (true) {
-		gameOfLifeStep(nextUpdate, buttonA, buttonB, buttonC);
+		step(nextUpdate, buttonA, buttonB, buttonC);
 	}
+}
+
 }

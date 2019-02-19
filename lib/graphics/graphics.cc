@@ -2,8 +2,10 @@
 #include <Adafruit_GFX.h>
 #include <Adafruit_NeoPixel.h>
 #include <math.h>
+#include <string.h>
 
 #include <graphics.h>
+#include <power.h>
 #include <rtc.h>
 
 
@@ -17,6 +19,7 @@ distress()
 {
 	int	led = 13;
 	pinMode(led, OUTPUT);
+	char	voltage[8];
 
 	neoPixel(255, 0, 0);
 
@@ -29,6 +32,13 @@ distress()
 		delay(100);
 		digitalWrite(led, LOW);
 		delay(700);
+		batteryVoltageString(voltage);
+		OLED::print(2, voltage);
+		if (Serial) {
+			double v = batteryVoltage();
+			Serial.print(v, 2);
+			Serial.println("V");
+		}
 	}
 }
 
@@ -89,6 +99,7 @@ namespace OLED {
 // The Adafruit SSD1306 in use is the FeatherWing version.
 // 	https://www.adafruit.com/product/2900
 Adafruit_SSD1306	oled(128, 32, &Wire);
+char			lines[3][21];
 
 
 void
@@ -98,6 +109,9 @@ setup()
 	oled.setTextSize(1);
 	oled.setTextColor(WHITE);        // Draw white text
 	oled.clearDisplay();
+	memset(lines[0], 0, 21);
+	memset(lines[1], 0, 21);
+	memset(lines[2], 0, 21);
 }
 
 
@@ -131,6 +145,25 @@ circle(uint16_t x, uint16_t y, uint16_t r, bool fill)
 	else {
 		oled.drawCircle(x, y, r, WHITE);
 	}
+}
+
+
+void
+print(uint8_t line, const char *text)
+{
+	int	slen = strnlen(text, 20);
+
+	memset(lines[line], 0, 21);
+	strncpy(lines[line], text, slen);
+
+	oled.clearDisplay();
+	oled.setCursor(0, 0);
+	oled.println(lines[0]);
+	oled.setCursor(0, 10);
+	oled.println(lines[1]);
+	oled.setCursor(0, 20);
+	oled.println(lines[2]);
+	oled.display();
 }
 
 

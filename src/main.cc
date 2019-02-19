@@ -31,6 +31,7 @@ waitForSerial()
 void
 setup()
 {
+	asm(".global _printf_float");
 	pinMode(6, INPUT_PULLUP);
 
 	Serial.begin(9600);
@@ -45,7 +46,7 @@ setup()
 	seedPRNG(UnusedAnalog);
 
 	if (!cardInit()) {
-		OLED::print(0, 0, "SD INIT FAIL");
+		OLED::print(0, "SD INIT FAIL");
 		distress();
 	}
 
@@ -63,6 +64,9 @@ setup()
 #else
 	OLED::print(10, 20, "UNK FEATHER");
 #endif
+	char	buf[4];
+	batteryVoltageString(buf);
+	OLED::print(80, 20, buf);
 	delay(1000);
 	OLED::clear();
 
@@ -74,27 +78,26 @@ NoiseGenerator	perlin;
 void
 loop()
 {
-	static double timeStep = 0.0;
+	// static double timeStep = 0.0;
 
-	OLED::clear();
-	for (double j = 0; j < static_cast<double>(OLED::HEIGHT); j++) {
-		for (double i = 0; i < static_cast<double>(OLED::WIDTH); i++) {
-			double noise = abs(perlin.sample(i, j, timeStep));
-			Serial.print(noise);
-			Serial.print(" ");
-			if (noise > 0.01 || noise < 0.05) {
-				OLED::pixel(i, j);
-			}
-		}
-		Serial.println();
-	}
-	OLED::show();
+	// OLED::clear();
+	// for (double j = 0; j < static_cast<double>(OLED::HEIGHT); j++) {
+	// 	for (double i = 0; i < static_cast<double>(OLED::WIDTH); i++) {
+	// 		double noise = abs(perlin.sample(i, j, timeStep));
+	// 		Serial.print(noise);
+	// 		Serial.print(" ");
+	// 		if (noise > 0.01 || noise < 0.05) {
+	// 			OLED::pixel(i, j);
+	// 		}
+	// 	}
+	// 	Serial.println();
+	// }
+	// OLED::show();
+	// timeStep += 0.01;
+	// delay(100);
 
-	// playGameOfLife();
+	gol::play(true);
 	// mandelbrot();
 	// If the game loop exits, indicate an error.
-	// distress();
-	
-	timeStep += 0.01;
-	delay(100);
+	distress();
 }

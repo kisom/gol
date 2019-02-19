@@ -3,6 +3,7 @@
 
 
 double	batteryVoltage();
+void	batteryVoltageString(char *buf);
 
 
 #endif // __POWER_H
