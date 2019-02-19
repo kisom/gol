@@ -8,14 +8,15 @@
 
 
 namespace hal {
+namespace card {
 
-
-bool	cardInit();
+bool	init();
 File	openFile(const char *path, bool write);
-bool	cardExists(const char *path);
-bool	cardRemove(const char *path);
+bool	exists(const char *path);
+bool	remove(const char *path);
 bool	mkdir(const char *path);
 
 
+} // namespace card
 } // namespace hal
 #endif // __CARD_H

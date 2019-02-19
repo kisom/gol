@@ -82,11 +82,11 @@ loadStats()
 	char	ch;
 
 	longestIteration = 0;
-	if (!hal::cardExists("gol/stats.txt")) {
+	if (!hal::card::exists("gol/stats.txt")) {
 		return;
 	}
 
-	File	stats = hal::openFile("gol/stats.txt", false);
+	File	stats = hal::card::openFile("gol/stats.txt", false);
 	if (!stats) {
 		hal::OLED::print(0, "SD error");
 		hal::distress();
@@ -109,7 +109,7 @@ loadStats()
 static bool
 writeStats()
 {
-	File	stats = hal::openFile("gol/stats.txt", true);
+	File	stats = hal::card::openFile("gol/stats.txt", true);
 
 	if (!stats) {
 		return false;
@@ -124,8 +124,8 @@ writeStats()
 static void
 init(GOLPattern pattern)
 {
-	if (!hal::cardExists((const char *)"gol/")) {
-		hal::mkdir((const char *)"gol/");
+	if (!hal::card::exists((const char *)"gol/")) {
+		hal::card::mkdir((const char *)"gol/");
 	}
 
 	current.iteration = 0;
@@ -292,7 +292,7 @@ updateGame()
 static bool
 load(const char *path)
 {
-	File	file = hal::openFile(path, false);
+	File	file = hal::card::openFile(path, false);
 	bool	result = false;
 	int	i = 0;
 	int	ch = 0;
@@ -347,9 +347,9 @@ store(const char *path)
 
 	// ignore errors: if the file doesn't exist, don't worry about
 	// the failure to remove.
-	hal::cardRemove((char *)path);
+	hal::card::remove((char *)path);
 
-	File	file = hal::openFile(path, FILE_WRITE);
+	File	file = hal::card::openFile(path, FILE_WRITE);
 	if (!file) {
 		result = file.getError();
 		goto golStoreFinally;
@@ -499,7 +499,7 @@ play(bool reset)
 	buttonC.registerCallback(golButtonC);
 
 	splash();
-	if (!reset && hal::cardExists("gol/current.txt")) {
+	if (!reset && hal::card::exists("gol/current.txt")) {
 		load("gol/current.txt");
 	} else {
 		init(Random);

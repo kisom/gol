@@ -7,16 +7,16 @@
 
 
 namespace hal {
-
+namespace card {
 
 const uint8_t	cardSelect = 10;
-static SdFat	card;
+static SdFat	sdcard;
 
 
 bool
-cardInit()
+init()
 {
-	if (!card.begin(cardSelect)) {
+	if (!sdcard.begin(cardSelect)) {
 		return false;
 	}
 	return true;
@@ -27,31 +27,32 @@ File
 openFile(const char *path, bool write)
 {
 	if (write) {
-		return card.open(path, FILE_WRITE);
+		return sdcard.open(path, FILE_WRITE);
 	}
-	return card.open(path, FILE_READ);
+	return sdcard.open(path, FILE_READ);
 }
 
 
 bool
-cardExists(const char *path)
+exists(const char *path)
 {
-	return card.exists(path);
+	return sdcard.exists(path);
 }
 
 
 bool
 mkdir(const char *path)
 {
-	return card.mkdir(path);
+	return sdcard.mkdir(path);
 }
 
 
 bool
-cardRemove(const char *path)
+remove(const char *path)
 {
-	return card.remove(path);
+	return sdcard.remove(path);
 }
 
 
+} // namespace card
 } // namespace hal
