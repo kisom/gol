@@ -7,6 +7,7 @@ namespace hal {
 
 double	batteryVoltage();
 void	batteryVoltageString(char *buf);
+void	sleep();
 
 
 } // namespace hal

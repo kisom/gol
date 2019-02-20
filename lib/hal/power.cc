@@ -1,6 +1,7 @@
 #include <Arduino.h>
 #include <stdlib.h>
 #include <string.h>
+#include <sam.h>
 
 #include <hal/power.h>
 #include <util.h>
@@ -23,6 +24,8 @@ batteryVoltage()
 	int	batteryPin = A6;
 #elif defined(ADAFRUIT_FEATHER_M0)
 	int	batteryPin = 9;
+#else
+#error Unknown board configuration - unable to build power library.
 #endif
 	pinMode(batteryPin, INPUT);
 	delay(5); // Give time for the pin to settle.
@@ -43,6 +46,30 @@ batteryVoltageString(char *buf)
 	double	voltage = batteryVoltage();
 
 	sprintf(buf, "%4.2fV", voltage);
+}
+
+
+void
+sleep()
+{
+    // Enable standby sleep mode (deepest sleep) and activate.
+    // Insights from Atmel ASF library.
+#if (SAMD20 || SAMD21)
+    // Don't fully power down flash when in sleep
+    NVMCTRL->CTRLB.bit.SLEEPPRM = NVMCTRL_CTRLB_SLEEPPRM_DISABLED_Val;
+#endif
+#if defined(__SAMD51__)
+    PM->SLEEPCFG.bit.SLEEPMODE = 0x4;         // Standby sleep mode
+    while(PM->SLEEPCFG.bit.SLEEPMODE != 0x4); // Wait for it to take
+#else
+    SCB->SCR |= SCB_SCR_SLEEPDEEP_Msk;
+#endif
+
+    __DSB(); // Data sync to ensure outgoing memory accesses complete
+    __WFI(); // Wait for interrupt (places device in sleep mode)
+
+    // Code resumes here on wake (WDT early warning interrupt).
+    return;
 }
 
 

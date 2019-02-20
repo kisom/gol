@@ -4,6 +4,7 @@
 #include <hal/buttons.h>
 #include <hal/card.h>
 #include <hal/graphics.h>
+#include <hal/power.h>
 #include <gol.h>
 
 
@@ -449,9 +450,13 @@ step(unsigned long &nextUpdate, hal::Button &a, hal::Button &b, hal::Button &c)
 		if (current.population == lastPopulation) {
 			stagnation++;
 			if (stagnation > 50) {
-				hal::OLED::clear();
-				hal::OLED::print(0, 10, "STAGNANT POP");
-				delay(1000);
+				char	battery[8];
+				hal::OLED::clearLines();
+				hal::OLED::print(0, "STAGNANT POP");
+				hal::batteryVoltageString(battery);
+				hal::OLED::print(1, battery);
+				delay(1500);
+				hal::OLED::clearLines();
 				init(Random);
 				lastPopulation = 0;
 				stagnation = 0;
@@ -490,9 +495,9 @@ void
 play(bool reset)
 {
 	unsigned long	nextUpdate = 0;
-	hal::Button	buttonA(9);
-	hal::Button	buttonB(6);
-	hal::Button	buttonC(5);
+	hal::Button	buttonA(hal::BUTTON_A);
+	hal::Button	buttonB(hal::BUTTON_B);
+	hal::Button	buttonC(hal::BUTTON_C);
 
 	buttonA.registerCallback(golButtonA);
 	buttonB.registerCallback(golButtonB);

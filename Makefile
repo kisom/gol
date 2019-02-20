@@ -43,8 +43,12 @@ monitor:
 
 .PHONY: deploy
 deploy: $(FIRMWARE)
-	$(PIO) -t upload && sleep 0.2 && $(PIO) -t monitor
+	$(PIO) -t upload && sleep 0.5 && $(PIO) -t monitor
 
 .PHONY: clean
 clean:
 	$(PIO) -t clean
+
+.PHONY:
+cloc:
+	cloc include lib src

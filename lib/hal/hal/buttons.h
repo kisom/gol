@@ -8,6 +8,11 @@
 namespace hal {
 
 
+static const uint8_t	BUTTON_A = 9;
+static const uint8_t	BUTTON_B = 6;
+static const uint8_t	BUTTON_C = 5;
+
+
 typedef void (*button_callback)();
 
 

@@ -101,8 +101,14 @@ namespace OLED {
 // The Adafruit SSD1306 in use is the FeatherWing version.
 // 	https://www.adafruit.com/product/2900
 Adafruit_SSD1306	oled(128, 32, &Wire);
-char			lines[3][21];
 
+
+typedef struct {
+	char	text[MAX_TEXT+1];	// tested manually
+	bool	inverse;
+} screenLine;
+
+screenLine	lines[3];
 
 void
 setup()
@@ -111,9 +117,6 @@ setup()
 	oled.setTextSize(1);
 	oled.setTextColor(WHITE);        // Draw white text
 	oled.clearDisplay();
-	memset(lines[0], 0, 21);
-	memset(lines[1], 0, 21);
-	memset(lines[2], 0, 21);
 }
 
 
@@ -151,25 +154,6 @@ circle(uint16_t x, uint16_t y, uint16_t r, bool fill)
 
 
 void
-print(uint8_t line, const char *text)
-{
-	int	slen = strnlen(text, 20);
-
-	memset(lines[line], 0, 21);
-	strncpy(lines[line], text, slen);
-
-	oled.clearDisplay();
-	oled.setCursor(0, 0);
-	oled.println(lines[0]);
-	oled.setCursor(0, 10);
-	oled.println(lines[1]);
-	oled.setCursor(0, 20);
-	oled.println(lines[2]);
-	oled.display();
-}
-
-
-void
 print(uint16_t x, uint16_t y, const char *text)
 {
 	oled.setCursor(x, y);
@@ -191,6 +175,70 @@ void
 show()
 {
 	oled.display();
+}
+
+
+void
+clearLines()
+{
+	memset(lines[0].text, 0, MAX_TEXT+1);
+	lines[0].inverse = false;
+	memset(lines[1].text, 0, MAX_TEXT+1);
+	lines[0].inverse = false;
+	memset(lines[2].text, 0, MAX_TEXT+1);
+	lines[0].inverse = false;
+	oled.clearDisplay();
+	oled.display();
+}
+
+
+static void
+showLines()
+{
+	oled.clearDisplay();
+	for (uint8_t i = 0; i < 3; i++) {
+		oled.setCursor(0, i * 10);
+		if (lines[i].inverse) {
+			oled.setTextColor(BLACK, WHITE);
+		}
+		else {
+			oled.setTextColor(WHITE, BLACK);
+		}
+		oled.println(lines[i].text);
+	}
+	oled.display();
+}
+
+
+void
+print(uint8_t line, const char *text)
+{
+	if (line > 2) {
+		return;
+	}
+
+	int	slen = strnlen(text, MAX_TEXT);
+
+	memset(lines[line].text, 0, MAX_TEXT+1);
+	strncpy(lines[line].text, text, slen);
+	lines[line].inverse = false;
+	showLines();	
+}
+
+
+void
+iprint(uint8_t line, const char *text)
+{
+	if (line > 2) {
+		return;
+	}
+
+	int	slen = strnlen(text, MAX_TEXT);
+
+	memset(lines[line].text, 0, MAX_TEXT+1);
+	strncpy(lines[line].text, text, slen);
+	lines[line].inverse = true;
+	showLines();	
 }
 
 
