@@ -30,6 +30,18 @@ uint8_t			start = 0;
 uint8_t			end = 0;
 
 
+static void
+setPage()
+{
+	start = (currentItem / 3) * 3;
+	end = start + 2;
+	while (nMenuItems <= end) {
+		end--;	
+	}
+	Serial << "setPage: " << start << " " << currentItem << " " << end << endl;
+}
+
+
 void	
 addItem(const char *text, void (*callback)(void))
 {
@@ -41,7 +53,7 @@ addItem(const char *text, void (*callback)(void))
 	menu.push_back(item);
 	nMenuItems++;
 	if (end < 2) {
-		end++;
+		setPage();
 	}
 }
 
@@ -86,13 +98,8 @@ prevItem()
 {
 	menu[currentItem].selected = false;
 	currentItem = wrap(currentItem - 1);
-	if ((currentItem % 3) == 2) {
-		Serial << "paging back: " << start << " - " << end << endl;
-		start = currentItem - 2;
-		end = currentItem;
-	}
-
 	menu[currentItem].selected = true;
+	setPage();
 	display();
 	
 	Serial << "current item: " << currentItem << " / " << nMenuItems <<
@@ -106,18 +113,8 @@ nextItem()
 {
 	menu[currentItem].selected = false;
 	currentItem = wrap(currentItem + 1);
-	if ((currentItem % 3) == 0) {
-		Serial << "paging forward: " << start << " - " << end << endl;
-		start = currentItem;
-		if ((nMenuItems - 1) < (currentItem + 2)) {
-			end = nMenuItems - 1;
-		}
-		else {
-			end = currentItem + 2;
-		}
-	}
-
 	menu[currentItem].selected = true;
+	setPage();
 	display();
 
 	Serial << "current item: " << currentItem << " / " << nMenuItems <<
