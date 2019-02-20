@@ -145,10 +145,6 @@ init(GOLPattern pattern)
 	}
 
 	loadStats();	
-
-	hal::neoPixel(0, 255, 0);
-	delay(1000);
-	hal::neoPixel(0, 0, 255);
 }
 
 
@@ -367,6 +363,7 @@ store(const char *path)
 			}
 		}
 		file.write("\n");
+		file.flush(); // try to avoid a power spike from writing to the SD card.
 	}
 
 	file.print("POP: ");

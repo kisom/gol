@@ -88,6 +88,10 @@ setup()
 	menu::addItem("MANDELBROT", mandelbrot);
 	menu::addItem("DISTRESS", hal::distress);
 	menu::addItem("SLEEP", hal::sleep);
+
+	// Cut the neopixel to save power.
+	hal::neoPixel(0, 0, 0);
+	hal::neoPixelBrightness(0);
 }
 
 
