@@ -15,7 +15,7 @@
 #include <gol.h>
 #include <mandelbrot.h>
 #include <menu.h>
-#include <noise.h>
+#include <walker.h>
 
 
 constexpr bool	shouldWaitForSerial = false;
@@ -85,6 +85,7 @@ setup()
 	hal::OLED::clearLines();
 
 	menu::addItem("GAME OF LIFE", gol::play);
+	menu::addItem("WALKER", walker::play);
 	menu::addItem("MANDELBROT", mandelbrot);
 	menu::addItem("DISTRESS", hal::distress);
 	menu::addItem("SLEEP", hal::sleep);
@@ -94,8 +95,6 @@ setup()
 	hal::neoPixelBrightness(0);
 }
 
-
-noise::NoiseGenerator	perlin;
 
 void
 loop()
