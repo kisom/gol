@@ -1,6 +1,6 @@
 #include <Arduino.h>
 #include <hal/buttons.h>
-#include <util.h>
+#include <util/util.h>
 
 
 namespace hal {

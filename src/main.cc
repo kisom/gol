@@ -31,6 +31,18 @@ waitForSerial()
 }
 
 
+static void
+blinkHelloWorld(uint8_t	times)
+{
+	for (uint8_t i = 0; i < times; i++) {
+		hal::OLED::print(1, "HELLO, WORLD");
+		delay(250);
+		hal::OLED::iprint(1, "HELLO, WORLD");
+		delay(250);
+	}
+}
+
+
 void
 setup()
 {
@@ -61,7 +73,7 @@ setup()
 	Serial.print(millis(), DEC);
 	Serial.println("MS");
 
-	hal::OLED::print(0, "BOOT OKAY");
+	hal::OLED::print(0, "BOOT OK");
 	hal::OLED::iprint(1, "HELLO, WORLD");
 #if defined(ADAFRUIT_FEATHER_M4_EXPRESS)
 	char	buf[20] = "FEATHER M4 - ";
@@ -73,14 +85,9 @@ setup()
 	hal::batteryVoltageString(buf+13);
 	hal::OLED::print(2, buf);
 	delay(1000);
-	hal::OLED::print(1, "HELLO, WORLD");
-	delay(250);
-	hal::OLED::iprint(1, "HELLO, WORLD");
-	delay(250);
-	hal::OLED::print(1, "HELLO, WORLD");
-	delay(250);
-	hal::OLED::iprint(1, "HELLO, WORLD");
-	delay(250);
+
+	blinkHelloWorld(8);
+
 	hal::OLED::clear();
 	hal::OLED::clearLines();
 

@@ -403,7 +403,7 @@ golButtonB()
 {
 	static unsigned long	lastPress = 0;
 
-	if ((millis() - lastPress) < 250) {
+	if ((millis() - lastPress) < 500) {
 		init(Random);
 		store("gol/initial.txt");
 		display();

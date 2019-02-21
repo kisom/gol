@@ -4,7 +4,7 @@
 #include <sam.h>
 
 #include <hal/power.h>
-#include <util.h>
+#include <util/util.h>
 
 
 namespace hal {

@@ -7,22 +7,22 @@ SOURCES :=					\
 		lib/hal/buttons.cc		\
 		lib/hal/hal/card.h		\
 		lib/hal/card.cc			\
-		lib/gol/gol.h			\
-		lib/gol/gol.cc			\
 		lib/hal/hal/graphics.h		\
 		lib/hal/graphics.cc		\
-		lib/mandelbrot/mandelbrot.h	\
-		lib/mandelbrot/mandelbrot.cc	\
-		lib/noise/noise.h		\
-		lib/noise/noise.cc		\
 		lib/hal/hal/power.h		\
 		lib/hal/power.cc		\
 		lib/hal/hal/random.h		\
 		lib/hal/random.cc		\
 		lib/hal/hal/rtc.h		\
 		lib/hal/rtc.cc			\
-		lib/util/util.h			\
-		lib/util/util.cc		\
+		lib/hal/util/util.h		\
+		lib/hal/util/util.cc		\
+		include/gol.h			\
+		src/gol.cc			\
+		include/mandelbrot.h		\
+		src/mandelbrot.cc		\
+		lib/noise/noise.h		\
+		lib/noise/noise.cc		\
 		src/main.cc
 
 PIO :=	pio run -e $(BOARD)

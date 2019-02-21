@@ -1,7 +1,7 @@
 #include <Arduino.h>
 #include <math.h> 
 #include <noise.h>
-#include <util.h>
+#include <util/util.h>
 
 
 namespace noise {
@@ -152,6 +152,13 @@ NoiseGenerator::sample(double x, double y, double z)
 				       grad(p[ba+1], x-1, y, z-1)),
 			       lerp(u, grad(p[ab+1], x, y-1, z-1),
 				       grad(p[bb+1], x-1, y-1, z-1))));
+}
+
+
+void
+NoiseGenerator::randomise()
+{
+	this->randomPermutation();
 }
 
 

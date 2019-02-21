@@ -38,7 +38,6 @@ setPage()
 	while (nMenuItems <= end) {
 		end--;	
 	}
-	Serial << "setPage: " << start << " " << currentItem << " " << end << endl;
 }
 
 
@@ -68,10 +67,7 @@ clear()
 static void
 display()
 {
-	Serial << "showing items " << start << " - " << end << endl;
-
 	uint8_t	line = 0;
-	Serial << "clearing display" << endl;
 	hal::OLED::clearLines();
 	for (uint8_t i = start; i <= end; i++) {
 		if (menu[i].selected) {
@@ -101,10 +97,6 @@ prevItem()
 	menu[currentItem].selected = true;
 	setPage();
 	display();
-	
-	Serial << "current item: " << currentItem << " / " << nMenuItems <<
-		   " (" << menu[currentItem].text << ") " << 
-		   (menu[currentItem].selected ? "*" : "-") << endl;
 }
 
 
@@ -116,10 +108,6 @@ nextItem()
 	menu[currentItem].selected = true;
 	setPage();
 	display();
-
-	Serial << "current item: " << currentItem << " / " << nMenuItems <<
-		   " (" << menu[currentItem].text << ") " << 
-		   (menu[currentItem].selected ? "*" : "-") << endl;
 }
 
 
@@ -148,8 +136,6 @@ show()
 	}
 	menu[0].selected = true;
 	currentItem = 0;
-
-	Serial << "showing menu" << endl;
 
 	display();
 
