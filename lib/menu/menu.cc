@@ -1,3 +1,7 @@
+// The menu builds on the OLED featherwing and assumes the three
+// buttons and three lines of text available there. It supports a
+// maximum of 254 menu items.
+//
 // This library requires delay() from the Arduino library,
 // which also defines a max and min macro that conflict with
 // the STL.
@@ -16,6 +20,20 @@
 
 
 namespace menu {
+
+
+static hal::Button	A(hal::BUTTON_A);
+static hal::Button	B(hal::BUTTON_B);
+static hal::Button	C(hal::BUTTON_C);
+
+
+static void
+clearCallbacks()
+{
+	A.registerCallback(nullptr);	
+	B.registerCallback(nullptr);	
+	C.registerCallback(nullptr);	
+}
 
 
 typedef struct {
@@ -45,6 +63,10 @@ void
 addItem(const char *text, void (*callback)(void))
 {
 	menuItem	item;
+
+	if (nMenuItems == 254) {
+		return;
+	}
 
 	strncpy(item.text, text, hal::OLED::MAX_TEXT);
 	item.selected = false;
@@ -85,7 +107,11 @@ display()
 static inline uint8_t
 wrap(uint8_t n)
 {
-	return n % (nMenuItems);
+	// Handle the rollover.
+	if (n == 255) {
+		return nMenuItems - 1;
+	}
+	return n % nMenuItems;
 }
 
 
@@ -123,10 +149,7 @@ selectItem()
 void
 show()
 {
-	hal::Button	A(hal::BUTTON_A);
-	hal::Button	B(hal::BUTTON_B);
-	hal::Button	C(hal::BUTTON_C);
-
+	clearCallbacks();
 	A.registerCallback(prevItem);
 	B.registerCallback(selectItem);
 	C.registerCallback(nextItem);

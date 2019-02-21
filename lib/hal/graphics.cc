@@ -71,6 +71,13 @@ neoPixelBrightness(uint8_t brightness)
 }
 
 
+bool
+points_equal(struct Point &p0, struct Point &p1)
+{
+	return (p0.x == p1.x) && (p0.y == p1.y);
+}
+
+
 uint16_t
 delta(uint16_t a, uint16_t b)
 {
@@ -151,6 +158,26 @@ circle(uint16_t x, uint16_t y, uint16_t r, bool fill)
 		oled.drawCircle(x, y, r, WHITE);
 	}
 }
+
+
+void
+line(uint16_t x0, uint16_t y0, uint16_t x1, uint16_t y1)
+{
+	oled.drawLine(x0, y0, x1, y1, WHITE);
+}
+
+
+void
+line(uint16_t x0, uint16_t y0, uint16_t x1, uint16_t y1, bool inv)
+{
+	if (inv) {
+		oled.drawLine(x0, y0, x1, y1, WHITE);
+	}
+	else {
+		oled.drawLine(x0, y0, x1, y1, BLACK);
+	}
+}
+
 
 
 void

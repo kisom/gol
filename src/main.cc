@@ -15,6 +15,7 @@
 #include <gol.h>
 #include <mandelbrot.h>
 #include <menu.h>
+#include <scribble.h>
 #include <walker.h>
 
 
@@ -92,6 +93,7 @@ setup()
 	hal::OLED::clearLines();
 
 	menu::addItem("GAME OF LIFE", gol::play);
+	menu::addItem("SCRIBBLE", scribble::play);
 	menu::addItem("WALKER", walker::play);
 	menu::addItem("MANDELBROT", mandelbrot);
 	menu::addItem("DISTRESS", hal::distress);

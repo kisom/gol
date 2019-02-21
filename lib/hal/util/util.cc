@@ -19,68 +19,28 @@ swap_ul(unsigned long &a, unsigned long &b)
 	a ^= b;
 }
 
-// http://forum.arduino.cc/index.php?topic=368720.0
-/*
-  dtostrf - Emulation for dtostrf function from avr-libc
-  Copyright (c) 2015 Arduino LLC.  All rights reserved.
 
-  This library is free software; you can redistribute it and/or
-  modify it under the terms of the GNU Lesser General Public
-  License as published by the Free Software Foundation; either
-  version 2.1 of the License, or (at your option) any later version.
-
-  This library is distributed in the hope that it will be useful,
-  but WITHOUT ANY WARRANTY; without even the implied warranty of
-  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
-  Lesser General Public License for more details.
-
-  You should have received a copy of the GNU Lesser General Public
-  License along with this library; if not, write to the Free Software
-  Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
-*/
-#if 0
-char *dtostrf(double val, int width, unsigned int prec, char *sout)
+uint16_t
+clamp_u16(uint16_t v, uint16_t max)
 {
-	int decpt, sign, reqd, pad;
-	const char *s, *e;
-	char *p;
-	s = fcvt(val, prec, &decpt, &sign);
-	if (prec == 0 && decpt == 0) {
-		s = (*s < '5') ? "0" : "1";
-		reqd = 1;
-	} else {
-		reqd = strlen(s);
-		if (reqd > decpt) reqd++;
-		if (decpt == 0) reqd++;
+	if (v >= max) {
+		return max - 1;
 	}
-	if (sign) reqd++;
-	p = sout;
-	e = p + reqd;
-	pad = width - reqd;
-	if (pad > 0) {
-		e += pad;
-		while (pad-- > 0) *p++ = ' ';
-	}
-	if (sign) *p++ = '-';
-	if (decpt <= 0 && prec > 0) {
-		*p++ = '0';
-		*p++ = '.';
-		e++;
-		while ( decpt < 0 ) {
-			decpt++;
-			*p++ = '0';
-		}
-	}   
-	while (p < e) {
-		*p++ = *s++;
-		if (p == e) break;
-		if (--decpt == 0) *p++ = '.';
-	}
-	if (width < 0) {
-		pad = (reqd + width) * -1;
-		while (pad-- > 0) *p++ = ' ';
-	}
-	*p = 0;
-	return sout;
+	return v;
 }
-#endif
+
+
+uint16_t
+dclamp_u16(uint16_t v, int16_t dv, uint16_t max)
+{
+	if ((dv < 0) && (static_cast<uint16_t>(-dv) > v)) {
+		return 0;
+	}
+
+	v += dv;
+	if (v >= max) {
+		v = max - 1;
+	}
+
+	return v;
+}

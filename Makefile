@@ -17,12 +17,16 @@ SOURCES :=					\
 		lib/hal/rtc.cc			\
 		lib/hal/util/util.h		\
 		lib/hal/util/util.cc		\
-		include/gol.h			\
-		src/gol.cc			\
-		include/mandelbrot.h		\
-		src/mandelbrot.cc		\
 		lib/noise/noise.h		\
 		lib/noise/noise.cc		\
+		include/gol.h			\
+		include/mandelbrot.h		\
+		include/scribble.h		\
+		include/walker.h		\
+		src/gol.cc			\
+		src/mandelbrot.cc		\
+		src/scribble.cc			\
+		src/walker.cc			\
 		src/main.cc
 
 PIO :=	pio run -e $(BOARD)
