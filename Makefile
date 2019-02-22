@@ -19,10 +19,12 @@ SOURCES :=					\
 		lib/hal/util/util.cc		\
 		lib/noise/noise.h		\
 		lib/noise/noise.cc		\
+		include/clock.h			\
 		include/gol.h			\
 		include/mandelbrot.h		\
 		include/scribble.h		\
 		include/walker.h		\
+		src/clock.cc			\
 		src/gol.cc			\
 		src/mandelbrot.cc		\
 		src/scribble.cc			\

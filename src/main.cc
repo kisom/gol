@@ -12,6 +12,7 @@
 #include <hal/random.h>
 #include <hal/rtc.h>
 
+#include <clock.h>
 #include <gol.h>
 #include <mandelbrot.h>
 #include <menu.h>
@@ -29,6 +30,14 @@ waitForSerial()
 	if (shouldWaitForSerial) {
 		while (!Serial) ;
 	}
+}
+
+
+static void
+napTime()
+{
+	hal::OLED::clear();
+	hal::sleep();
 }
 
 
@@ -96,8 +105,9 @@ setup()
 	menu::addItem("SCRIBBLE", scribble::play);
 	menu::addItem("WALKER", walker::play);
 	menu::addItem("MANDELBROT", mandelbrot);
+	menu::addItem("CLOCK", clkScreen::play);
 	menu::addItem("DISTRESS", hal::distress);
-	menu::addItem("SLEEP", hal::sleep);
+	menu::addItem("SLEEP", napTime);
 
 	// Cut the neopixel to save power.
 	hal::neoPixel(0, 0, 0);

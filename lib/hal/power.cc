@@ -52,24 +52,27 @@ batteryVoltageString(char *buf)
 void
 sleep()
 {
-    // Enable standby sleep mode (deepest sleep) and activate.
-    // Insights from Atmel ASF library.
+	Serial.println("sleeping...");
+	// Enable standby sleep mode (deepest sleep) and activate.
+	// Insights from Atmel ASF library.
 #if (SAMD20 || SAMD21)
-    // Don't fully power down flash when in sleep
-    NVMCTRL->CTRLB.bit.SLEEPPRM = NVMCTRL_CTRLB_SLEEPPRM_DISABLED_Val;
+	// Don't fully power down flash when in sleep
+	NVMCTRL->CTRLB.bit.SLEEPPRM = NVMCTRL_CTRLB_SLEEPPRM_DISABLED_Val;
 #endif
 #if defined(__SAMD51__)
-    PM->SLEEPCFG.bit.SLEEPMODE = 0x4;         // Standby sleep mode
-    while(PM->SLEEPCFG.bit.SLEEPMODE != 0x4); // Wait for it to take
+	PM->SLEEPCFG.bit.SLEEPMODE = 0x4;         // Standby sleep mode
+	while(PM->SLEEPCFG.bit.SLEEPMODE != 0x4); // Wait for it to take
 #else
-    SCB->SCR |= SCB_SCR_SLEEPDEEP_Msk;
+	SCB->SCR |= SCB_SCR_SLEEPDEEP_Msk;
 #endif
 
-    __DSB(); // Data sync to ensure outgoing memory accesses complete
-    __WFI(); // Wait for interrupt (places device in sleep mode)
+	noInterrupts();
+	__DSB(); // Data sync to ensure outgoing memory accesses complete
+	__WFI(); // Wait for interrupt (places device in sleep mode)
 
-    // Code resumes here on wake (WDT early warning interrupt).
-    return;
+	// Code resumes here on wake (WDT early warning interrupt).
+	while (1) delay(1000);
+	return;
 }
 
 

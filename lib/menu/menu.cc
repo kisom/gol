@@ -143,6 +143,8 @@ selectItem()
 	hal::OLED::clear();
 	hal::OLED::clearLines();
 	menu[currentItem].callback();
+	Serial.println("returning from callback");
+	display();
 }
 
 

@@ -11,6 +11,7 @@ namespace hal {
 bool		rtcInit();
 DateTime	rtcNow();
 uint32_t	rtcNowUnix();
+void		rtcFormatTime(char *);
 
 
 } // namespae hal
